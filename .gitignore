@@ -103,8 +103,6 @@ gradle-app.setting
 
 # Eclipse
 **/.classpath
-.project
-.settings/
  
 # Intellij
 java/**/.idea/
