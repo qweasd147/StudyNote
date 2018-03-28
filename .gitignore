@@ -108,7 +108,7 @@ gradle-app.setting
 java/**/.idea/
 java/**/*.iml
 java/**/*.iws
- 
+java/**/out/**
 # Mac
 .DS_Store
  
