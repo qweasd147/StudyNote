@@ -49,10 +49,6 @@ public class GenericsMain {
         
         //handleSuperWildCard(subSomeThingList);	ERROR!
         handleSuperWildCard(superSomeThingList);
-        
-        List<?> testArray = new ArrayList<>();
-        
-        List<? extends SuperSomeThingClass> superList = new ArrayList<>();
     }
     
     public void handleSubWildCard(List<? extends SuperSomeThingClass> someThingList) {

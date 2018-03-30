@@ -1,4 +1,4 @@
-﻿# Generics study.
+﻿# Generics.
 
 # 1. Generics ? 
     메소드 또는 collection class에 컴파일 시 타입 체크를 해주는 기능. 컴파일 시 체크하기 때문에
@@ -65,8 +65,7 @@ public void handleSuperWildCard(List<? super SuperSomeThingClass> someThingList)
 ```
 참고 사항으로 이런 방식으로는 안된다. 될꺼 같지만 list에 각 아이템 요소가 무엇으로 처리해야 할지 보장이 안된다.
 
-이유는 list에는 SuperSomeThingClass를 상속받은 모든 객체가 들어갈 수가 있다. 쫌더 자세히 설명하면 만약 저게 가능하다고 가정하면
-
+쫌더 자세히 설명하면 만약 저게 가능하다고 가정하면
 ```java
     List<? extends SuperSomeThingClass> list = new ArrayList<>();
     
