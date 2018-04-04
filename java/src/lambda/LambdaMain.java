@@ -1,5 +1,8 @@
 package lambda;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class LambdaMain {
@@ -7,7 +10,13 @@ public class LambdaMain {
     public static void main(String[] args) {
         LambdaMain mainInstance = new LambdaMain();
 
-        mainInstance.lambdaBase();
+        //mainInstance.lambdaBase();            //람다 기본 베이스
+
+        //mainInstance.closureByJava();         //자바에서 클로저 비슷하게 사용
+
+        //mainInstance.collectionDefaultMethod(); //콜렉션 프레임워크에서 람다 활용
+
+        mainInstance.methodReference();         //메소드 참조
     }
 
     public void lambdaBase(){
@@ -29,23 +38,27 @@ public class LambdaMain {
 
     public void likeCallback(LambdaInterface cb){
         // 함수를 넘겨 받아 원하는 시점에 호출할수 있다
+
+        //TODO : before process
         cb.doSomeThing();
+        //TODO : after process
     }
 
     public void closureByJava(){
         Function<Integer, Integer> func = getFunction();
 
-        Integer result = func.apply(10);
+        Integer result = func.apply(20);
 
+        System.out.println("function apply result : "+result);
     }
 
-    public static Function getFunction(){
+    public Function getFunction(){
         int num = 10;
 
         return (Function<Integer, Integer>) n ->  n*num;
     }
 
-    public static Function getFunction2(){
+    public Function getFunction2(){
         int num = 100;
 
         return new Function<Integer, Integer>() {
@@ -58,5 +71,30 @@ public class LambdaMain {
                 return null;
             }
         };
+    }
+
+    public void collectionDefaultMethod(){
+        List<String> strList = new ArrayList<>();
+
+        strList.add("one");
+        strList.add("two");
+        strList.add("three");
+        strList.add("four");
+
+        strList.replaceAll((s)->"number : "+s);
+
+        strList.forEach((s)-> System.out.println(s));
+    }
+
+    public void methodReference(){
+        Consumer<String> notUseReference = (s)->{
+            System.out.println(s);
+        };
+
+        Consumer<String> useReference = System.out::println;
+
+        notUseReference.accept("only Lambda!");
+
+        notUseReference.accept("use Method Reference!");
     }
 }
