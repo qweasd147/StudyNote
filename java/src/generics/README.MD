@@ -17,9 +17,9 @@ public void safeNunSafe(){
 
     SubGenerics<String> safeSub = new SubGenerics<String>();
 
-    String safeItem = safeSub.getItem();        //String 이라는게 보장이 됨
+    String safeItem = safeSub.getItem();                //String 이라는게 보장이 됨
 
-    SubGenerics<String> safeSub2 = new SubGenerics<>();     //컴파일 시, String 라는걸 유추(추론) 가능하여서 생략가능.
+    SubGenerics<String> safeSub2 = new SubGenerics<>(); //컴파일 시, String 라는걸 유추(추론) 가능하여서 생략가능.
 }
 ```
 이런식으로 가져올떄 형변환을 할 필요가 없다(객체 타입이 보장됨).
@@ -53,7 +53,7 @@ public void handleSuperWildCard(List<? super SuperSomeThingClass> someThingList)
     SubGenerics<String> safeSub2 = new SubGenerics<>();    
     SubGenerics<String> safeSub2 = new SubGenerics<String>();
 ```
-위의 두 줄은 서로 같다. 컴파일 시, String 라는걸 유추 가능함(생략 가능. jdk 1.7 이상)
+위의 두 줄은 서로 같다. 컴파일 시, String 라는걸 유추 가능함(생략 가능). jdk 1.7 이상만 가능
 ### 3.3 제너릭 메소드
     일단 보류
 

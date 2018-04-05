@@ -27,9 +27,9 @@ public class GenericsMain {
 
         SubGenerics<String> safeSub = new SubGenerics<String>();
 
-        String safeItem = safeSub.getItem();        //String 이라는게 보장이 됨
+        String safeItem = safeSub.getItem();                //String 이라는게 보장이 됨
 
-        SubGenerics<String> safeSub2 = new SubGenerics<>();     //컴파일 시, String 라는걸 유추(추론) 가능하여서 생략가능.
+        SubGenerics<String> safeSub2 = new SubGenerics<>(); //컴파일 시, String 라는걸 유추(추론) 가능하여서 생략가능.
     }
 
     public void wildCard(){
@@ -53,14 +53,14 @@ public class GenericsMain {
     
     public void handleSubWildCard(List<? extends SuperSomeThingClass> someThingList) {
     	
-    	//some thing...
+    	//TODO some thing...
 
         //someThingList.add(new SuperSomeThingClass());     ERROR!
     }
     
     public void handleSuperWildCard(List<? super SuperSomeThingClass> someThingList) {
     	
-    	//some thing...
+    	//TODO some thing...
 
         //someThingList.add(new SuperSomeThingClass());     ERROR!
     }
