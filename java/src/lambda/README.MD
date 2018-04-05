@@ -214,7 +214,7 @@ public void methodReference(){
 
 ClassName::MethodName 형태로 작성하고, 메소드는 static이건 아니건 상관없다.
 
-위 소스를 보면 useReference 메소드에서 넘겨받는 파라미터는 generics에 의해 개수와 타입이
+위 소스를 보면 useReference 메소드에서 넘겨받는 파라미터는 Cusumer의 generics에 의해 개수와 타입이
 
 제한되어 맵핑(유추 가능)되는 것을 알수 있다. 근데 개인적으로 메소드 참조는 뭔가
 

@@ -96,6 +96,6 @@ public class LambdaMain {
 
         notUseReference.accept("only Lambda!");
 
-        notUseReference.accept("use Method Reference!");
+        useReference.accept("use Method Reference!");
     }
 }
