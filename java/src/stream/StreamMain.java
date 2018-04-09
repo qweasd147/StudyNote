@@ -1,19 +1,24 @@
 package stream;
 
 import java.util.*;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class StreamMain {
+
     public static void main(String[] args) {
         StreamMain mainInstance = new StreamMain();
 
-        mainInstance.baseStream();        //스트림 기본
+        //mainInstance.baseStream();        //스트림 기본
 
         //mainInstance.streamOperator();    //스트림 중간처리, 최종 처리
 
-        //mainInstance.parallelStream();      //병렬 처리
+        //mainInstance.parallelStream();    //병렬 처리
+
+        mainInstance.streamCollect();       //스트림 수집(collect)
     }
 
     public void baseStream(){
@@ -31,16 +36,16 @@ public class StreamMain {
 
 
         //use stream
-        strToStream.forEach(System.out::println);
-        arrToStream.forEach(System.out::println);
-        colToStream.forEach(System.out::println);
+        strToStream.forEach(x4 -> System.out.println(x4));
+        arrToStream.forEach(x3 -> System.out.println(x3));
+        colToStream.forEach(x2 -> System.out.println(x2));
 
         colToStream = list.stream();
         colToStream
                 .filter(s->s.equals("one"))
-                .forEach(System.out::println);
+                .forEach(x1 -> System.out.println(x1));
 
-        list.forEach(System.out::println);
+        list.forEach(x -> System.out.println(x));
 
         //colToStream.forEach(System.out::println); ERROR!! 스트림은 소모성
     }
@@ -63,7 +68,7 @@ public class StreamMain {
         //중간연산만 단독으로 실행 시, 실행되지 않는다.
         Stream<UserVo> userVoStream = getMockUserList().stream();
 
-        userVoStream.peek(System.out::println); // 아무것도 출력되지 않음
+        userVoStream.peek(x -> System.out.println(x)); // 아무것도 출력되지 않음
 
         //스트림 연산을 하여도 원본은 변경되지 않는다.
         mockUserList.forEach((userVo)->{System.out.println(userVo.getName());});
@@ -116,5 +121,42 @@ public class StreamMain {
         userList.add(new UserVo("userName8",38,"email8@test.co.kr",auth3));
 
         return userList;
+    }
+
+    public void streamCollect(){
+        List<UserVo> userList = getMockUserList();
+
+        //stream -> array
+        Stream<UserVo> toArrayStream = userList.stream();
+
+        UserVo[] resultArray = toArrayStream.toArray(UserVo[]::new);
+
+        /* 람다 & 메소드 참조 안쓴거
+        UserVo[] resultArray = toArrayStream.toArray(new IntFunction<UserVo[]>() {
+            @Override
+            public UserVo[] apply(int value) {
+                return new UserVo[value];
+            }
+        });
+        */
+
+        //stream -> map
+        Stream<UserVo> toMapStream = userList.stream();
+
+        Map<String, UserVo> resultMap = toMapStream.collect(Collectors.toMap(userVo -> userVo.getName(), userVo -> userVo));
+
+        //stream -> list
+        Stream<UserVo> toListStream = userList.stream();
+
+        List<UserVo> resultList = toListStream.collect(Collectors.toList());
+
+        System.out.println("array");
+        Arrays.stream(resultArray).forEach(System.out::println);
+
+        System.out.println("map");
+        System.out.println(resultMap);
+
+        System.out.println("list");
+        System.out.println(resultList);
     }
 }

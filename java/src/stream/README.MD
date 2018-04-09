@@ -102,6 +102,52 @@ public void parallelStream(){
 ```
 위 소스와 같이 스트림을 병렬처리 스트림으로 변경(parallel) 후 일반 스트림 같이 사용하면 된다.
 
+### 2.2 collect
+가공 및 처리한 데이터를 수집. 간단히 stream을 array, collection framework 등으로 형변환 한다고 생각하면 된다.
+```java
+public void streamCollect(){
+  
+  List<UserVo> userList = getMockUserList();
+  
+  //stream -> array
+  Stream<UserVo> toArrayStream = userList.stream();
+  UserVo[] resultArray = toArrayStream.toArray(UserVo[]::new);
+}
+```
+
+array로 변환 시, 그냥 toArray() 메소드를 호출하면된다. 하지만 여기서 Object 배열이 아닌 지정된 배열로 반환하기
+
+위해서는 toArray() 메소드에 IntFunction 인터페이스를 구현해서 넘겨줘야한다.
+
+번외로 메소드 참조에 관련해서 꽤나 부정적인 인식이 있었는데 이렇게 보니까 깔끔한것 같기는하다.
+
+```java
+public void streamCollect(){
+  List<UserVo> userList = getMockUserList();
+  
+  Stream<UserVo> toMapStream = userList.stream();
+  
+  Map<String, UserVo> resultMap = toMapStream.collect(Collectors.toMap(userVo -> userVo.getName(), userVo -> userVo));
+}
+```
+collection framework로 변환 시, Stream.collect를 사용하고, 인자값(함수 같은 메소드)으로 toMap을 넘겨주면 된다.
+
+여기서 주의점으로 map은 (key, value)로 존재하므로 key값을 구하기 위한 Function interface,
+
+value값을 구하기 위한 Function interface를 구현해서 넘겨줘야 한다. 소스를 보면 key 값으로 user name, 값으로 vo객체 그대로
+
+넘겨주는 것을 확인 할 수 있다.
+
+```java
+public void streamCollect(){
+  List<UserVo> userList = getMockUserList();
+  
+  Stream<UserVo> toListStream = userList.stream();
+  
+  List<UserVo> resultList = toListStream.collect(Collectors.toList());
+}
+```
+list로 변환은 간단하다. 다른 쪽도 마찬가지지만 현재 스트림을 통해 타입 유추가 가능하므로, 그냥 리스트로 받겠다는 명령만 하면 된다.
 
 # 3. 주의점
 ### 3.1 데이터 원본을 변경하지 않음
