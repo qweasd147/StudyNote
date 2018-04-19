@@ -1,10 +1,13 @@
 package stream;
 
+import sun.font.StrikeMetrics;
+
 import java.util.*;
-import java.util.function.IntFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.*;
 
 @SuppressWarnings("unused")
 public class StreamMain {
@@ -18,7 +21,15 @@ public class StreamMain {
 
         //mainInstance.parallelStream();    //병렬 처리
 
-        mainInstance.streamCollect();       //스트림 수집(collect)
+        //mainInstance.streamCollect();     //스트림 수집(collect)
+
+        //mainInstance.flatStream();        //flatMap 사용
+
+        //mainInstance.streamSort();          //스트림 정렬
+
+        //mainInstance.streamMap();          //스트림 map 사용
+
+        mainInstance.collectorImpl();          //collector 구현
     }
 
     public void baseStream(){
@@ -150,6 +161,9 @@ public class StreamMain {
 
         List<UserVo> resultList = toListStream.collect(Collectors.toList());
 
+        //ArrayList<UserVo> resultList = toListStream.collect(Collectors.toCollection(() -> new ArrayList<>()));    //Array List로 list 생성
+        //ArrayList<UserVo> resultList = toListStream.collect(Collectors.toCollection(ArrayList::new));             //메소드 참조로 생성
+
         System.out.println("array");
         Arrays.stream(resultArray).forEach(System.out::println);
 
@@ -158,5 +172,84 @@ public class StreamMain {
 
         System.out.println("list");
         System.out.println(resultList);
+    }
+
+    public void flatStream(){
+
+        Stream<String[]> strArrStream = Stream.of(
+            new String[]{"1_1", "1_2", "1_3", "1_4", "1_5", "1_6"}
+            , new String[]{"2_1", "2_2", "2_3", "2_4", "2_5", "2_6"}
+            , new String[]{"3_1", "3_2", "3_3", "3_4", "3_5", "3_6"}
+        );
+
+        /*
+        메소드 참조 x
+        strArrStream
+            .flatMap((strArr)-> Arrays.stream(strArr))
+            .forEach(s -> System.out.println(s));
+        */
+
+        /*
+        strArrStream
+            .flatMap(Arrays::stream)
+            .forEach(System.out::println);
+*/
+        strArrStream
+            .map(Arrays::stream)
+            .forEach(System.out::println);
+    }
+
+    public void streamSort(){
+        IntStream intsStream = new Random().ints(30, 0, 100);
+
+        //intsStream.sorted().forEach(System.out::println);
+        intsStream.parallel().filter(value -> value>30).sorted().forEach(System.out::println);
+        //intsStream.parallel().filter(value -> value>30).sorted().forEachOrdered(System.out::println);
+    }
+
+    public void streamMap(){
+
+        Stream<String> strArrStream = Stream.of(
+                "1_1", "1_2", "1_3", "1_4", "1_5", "1_6"
+                , "2_1", "2_2", "2_3", "2_4", "2_5", "2_6"
+                , "3_1", "3_2", "3_3", "3_4", "3_5", "3_6"
+        );
+
+        strArrStream
+            .parallel()
+            .filter(str -> str.indexOf("1")==0)
+            .sorted()
+            .map(value -> {
+
+                Map<String, String> item = new HashMap<>();
+
+                item.put("isFirst","true");
+                item.put("itemVal",value);
+
+                return item;
+            })
+            .filter(strMap -> strMap.get("itemVal")=="1_1" || strMap.get("itemVal")=="1_2" || strMap.get("itemVal")=="1_3")
+            .forEach(System.out::println);
+    }
+
+    public void streamReduce(){
+
+        Integer[] numberArr = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 10};
+
+        Stream<Integer> numberStream1 = Arrays.stream(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 10});
+
+        Integer intReuslt = numberStream1.reduce(0, (integer1, integer2) -> integer1 + integer2);
+
+        System.out.println("integer Sum : "+intReuslt);
+    }
+
+    public void collectorImpl(){
+        String[] strArr = {"111","222","333","444","555","666","777"};
+
+        Stream<String> strSteam = Stream.of(strArr);
+
+        String result = strSteam.collect(new CollectorImpl());
+
+        System.out.println(result);
     }
 }

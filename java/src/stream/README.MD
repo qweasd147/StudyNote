@@ -4,6 +4,9 @@
 ### 1.1 내부 반복처리를 진행하고, 직관적이라 이해하기 쉽다.
 
 ### 1.2 손쉬운 병렬처리
+
+### 1.3 최종 연산이 실행될때 중간연산들을 실행한다.
+  이 부분이 좋은 점이 불필요한 연산을 줄여준다는 점이다. 밑에 2.1에서 좀 더 자세히 설명
     
 # 2. Stream 기본 사용법
 
@@ -86,6 +89,12 @@ public void streamOperator(){
 
 아니면 peek 이후에 최종연산 메소드를 체이닝 하여야한다.
 
+이러한 점이 좋은 점이유는 불필요한 연산을 줄여준다는 점이다. 예를들어 스트림 요소가 무한 스트림이고
+
+그 중 중간연산에서 limit을 사용 후 중간연산 처리시 무한한 데이터를 전부 핸들링하는게 아니라 limit만큼
+
+제한 후 핸들링 하는 점이라 효율적이라고 말할 수 있다.
+
 ### 2.2 병렬처리
 병렬처리는 스레드를 사용 해야 할것이고 그럴때 생각 해야 할 것이 많을 것이다.
 
@@ -149,6 +158,93 @@ public void streamCollect(){
 ```
 list로 변환은 간단하다. 다른 쪽도 마찬가지지만 현재 스트림을 통해 타입 유추가 가능하므로, 그냥 리스트로 받겠다는 명령만 하면 된다.
 
+### 2.3 map
+각 스트림마다 동일한 작업을 수행한다.
+```java
+public void streamMap(){
+  Stream<String> strArrStream = Stream.of(
+    "1_1", "1_2", "1_3", "1_4", "1_5", "1_6"
+    , "2_1", "2_2", "2_3", "2_4", "2_5", "2_6"
+    , "3_1", "3_2", "3_3", "3_4", "3_5", "3_6"
+  );
+
+  strArrStream
+    .map((s)->"prefix_"+s))
+    .forEach(System.out::println);
+}
+```
+
+
+### 2.4 flatMap
+스트림의 타입이 배열 등인 경우, 핸들링 하기가 불편한 경우가 있을 수 있다. 예를 들어 Stream<String[]> 같이 배열로
+
+스트림이 구성 된 경우 각 배열을 꺼내 모든 아이템을 문자열로 직렬화 하여 핸들링하는 경우가 더 편하게 느껴질 수도 있다.
+
+(개인 차에 따라 무조건 편하지 않을 수도 있다.) 그런 경우 flatMap을 사용하여 말그대로 스트림의 배열을 평평하게? 만들어 줄 수도 있다.
+
+```java
+public void flatStream(){
+  Stream<String[]> strArrStream = Stream.of(
+    new String[]{"1_1", "1_2", "1_3", "1_4", "1_5", "1_6"}
+      , new String[]{"2_1", "2_2", "2_3", "2_4", "2_5", "2_6"}
+      , new String[]{"3_1", "3_2", "3_3", "3_4", "3_5", "3_6"}
+  );
+
+  strArrStream
+    .flatMap(Arrays::stream)
+    .forEach(System.out::println);
+}
+```
+메소드 참조에 대해 부정적인 인식을 가지고 있지만, 일단 잘 써먹고 있다....
+
+flatMap을 사용하여 스트림 내 배열(또는 객체)로 구성된 된 아이템을 단일 원소로 구성 할 수가 있다.
+
+### 2.5 reduce
+처음 부터 마지막 원소까지 하나씩 처리하면서 하나의 원소로 줄여가는 작업을 수행한다.
+
+```java
+public void streamReduce(){
+  Integer[] numberArr = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 10};
+
+  Stream<Integer> numberStream1 = Arrays.stream(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 10});
+
+  Integer intReuslt = numberStream1.reduce(0, (integer1, integer2) -> integer1 + integer2);
+
+  System.out.println("integer Sum : "+intReuslt);
+}
+```
+
+위 소스에서 reduce 메소드에 넘겨주는 첫번째 인자값은  저장될 변수(Stream의 제너릭 타입을 따라간다)와
+
+두번째 인자로 함수를 받아 어떻게 줄여갈지를 결정한다. 위 소스는 각 원소를 순회하면서 모든 값을 더해가는 형태이다.
+
+참고로
+첫번째 사이클 : 0+1
+두번째 사이클 : 1+2
+세번째 사이클 : 3+3
+....
+
+### 2.6 Collector 구현
+
+스트림의 최종 연산 메소드 중 하나인 Stream.collect()를 사용하여 map, list, set 등의 형태로 수집하여
+
+반환하고 싶을 경우도 있겠지만, 경우에 따라서 내가 원하는 형태의 결과로 수집되어 받고 싶은 경우도 있을 것이다.
+
+이런 경우에 Stream.collect() 메소드의 인자값으로 Collector를 구현한 인스턴스를 넘겨주면 된다. 이것만 구현하면 
+
+내부적으로 병렬 처리 시 생각해야 할 부분을 내부적으로 해결이 되므로 꽤나 편하다고 생각된다.
+
+소스가 길어지므로 collectorImpl 메소드와 CollectorImpl 클래스를 참고!
+
+참고로 CollectorImpl 클래스는 메소드(정확히 함수형 인터페이스) 표현 방법은 여러가지로 써놓았다. 모르거나
+
+어디서 무조건 배껴온거 아니다.
+
+위에서 말한 두 부분을 보기만하면 얼추 이해는 갈것이라고 생각되고, 추가로 내부적으로는 reduce를 사용한다는 점도
+
+같이 기억하면 될것이다.
+
+
 # 3. 주의점
 ### 3.1 데이터 원본을 변경하지 않음
 
@@ -161,10 +257,10 @@ public void streamOperator(){
 
     
     userListStream
-            .filter(userVo -> userVo.getAge()>20)
-            //.peek(System.out::println)
-            .filter(userVo -> userVo.getAuth().contains("master"))
-            .forEach(userVo -> System.out.println(userVo.getName()));
+      .filter(userVo -> userVo.getAge()>20)
+      //.peek(System.out::println)
+      .filter(userVo -> userVo.getAuth().contains("master"))
+      .forEach(userVo -> System.out.println(userVo.getName()));
 
     //스트림 연산을 하여도 원본은 변경되지 않는다.
     mockUserList.forEach((userVo)->{System.out.println(userVo.getName());});
@@ -183,8 +279,8 @@ public void baseStream(){
     Stream<String> strToStream = Stream.of("one", "two", "three", "four");
 
     strToStream
-            .filter(s->s.equals("one"))
-            .forEach(System.out::println);
+      .filter(s->s.equals("one"))
+      .forEach(System.out::println);
 
 
     //strToStream.forEach(System.out::println); ERROR!! 스트림은 소모성
@@ -205,3 +301,22 @@ public void baseStream(){
 당장 2.2에 있는 소스만 봐도 순서가 보장 되지 않는 것을 확인 할 수가 있다.
 
 병렬 처리 시 thread safe 관련 해서 항상 유의해야 한다(thread safe 관련 설명은 생략).
+
+### 3.5 병렬처리 시 sort
+
+```java
+public void streamSort(){
+    IntStream intsStream = new Random().ints(30, 0, 100);
+
+    //intsStream.sorted().forEach(System.out::println);
+    intsStream.parallel().filter(value -> value>30).sorted().forEach(System.out::println);
+}
+```
+
+병렬처리의 문제점이다. 위 소스에서 filter 후 sort 시, sort는 모든 처리가 종료 된 후 마지막에 정렬이 되야 하지만
+
+병렬처리라서 실행 순서를 보장 할 수가 없다. 따라서 위 소스는 filter는 정상적으로 작동 해도, sort는 정상 작동하지 않는다.
+
+하지만 'forEach'메소드 대신 'forEachOrdered' 사용 시, 병렬 처리 여부에 상관없이 처리가 가능하지만
+
+병렬처리로서의 이점(속도)은 줄어든다고 한다.
