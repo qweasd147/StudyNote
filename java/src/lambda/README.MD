@@ -206,13 +206,15 @@ public void methodReference(){
 
     notUseReference.accept("only Lambda!");
 
-    notUseReference.accept("use Method Reference!");
+    useReference.accept("use Method Reference!");
 }
 ```
 
 소스 자체는 이해하는데 무리는 없을 꺼라고 생각된다.
 
 ClassName::MethodName 형태로 작성하고, 메소드는 static이건 아니건 상관없다.
+
+참고로 생성자는 ClassName::new(String::new) 이런식으로 사용한다.
 
 위 소스를 보면 useReference 메소드에서 넘겨받는 파라미터는 Cusumer의 generics에 의해 개수와 타입이
 
