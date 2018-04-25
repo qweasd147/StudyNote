@@ -13,6 +13,8 @@ public class GenericsMain {
         //mainInstance.safeNunSafe();     //타입이 보장되는지 여부
 
         //mainInstance.wildCard();       //와일드 카드 사용법
+
+        mainInstance.genericsMethod();   //제너릭 메소드
     }
 
     /**
@@ -63,5 +65,52 @@ public class GenericsMain {
     	//TODO some thing...
 
         //someThingList.add(new SuperSomeThingClass());     ERROR!
+    }
+
+    public void genericsMethod(){
+
+        SubSomeThingClass sub1 = new SubSomeThingClass();
+        SubSomeThingClass sub2 = new SubSomeThingClass();
+
+        SubGenerics<SubSomeThingClass> subGen1 = new SubGenerics<>();
+        SubGenerics<SubSomeThingClass> subGen2 = new SubGenerics<>();
+
+
+        boolean equalsResult1 = isEquals1(sub1, sub2);
+
+        //isEquals2, 3은 같은 로직의 메소드
+        boolean equalsResult2 = isEquals2(subGen1, subGen2);
+        boolean equalsResult3 = isEquals3(subGen1, subGen1);
+
+        System.out.println("result 1 : "+equalsResult1);
+        System.out.println("result 2 : "+equalsResult2);
+        System.out.println("result 3 : "+equalsResult3);
+
+    }
+
+    private static <T extends SubSomeThingClass> boolean isEquals1(T s1, T s2){
+
+        int s1Code = s1.hashCode();
+        int s2Code = s2.hashCode();
+
+	    return s1Code == s2Code;
+    }
+
+    private static <T extends SubSomeThingClass> boolean isEquals2(SubGenerics<T> s1, SubGenerics<T> s2){
+
+        int s1Code = s1.hashCode();
+        int s2Code = s2.hashCode();
+
+        return s1Code == s2Code;
+    }
+
+    private static boolean isEquals3(
+            SubGenerics<? extends SubSomeThingClass> s1
+            , SubGenerics<? extends SubSomeThingClass> s2){
+
+        int s1Code = s1.hashCode();
+        int s2Code = s2.hashCode();
+
+        return s1Code == s2Code;
     }
 }

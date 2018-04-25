@@ -28,7 +28,7 @@ public void safeNunSafe(){
     귀찮아서 소스 코드 생략. 첨부된 소스 코드를 보자(mainInstance.wildCard 실행)
 
 ### 2.3 제너릭 메소드의 사용
-    조금 더 공부 해야겠음.. 뭔가 장점이 와닿지가 않음
+    중복된 소스와 제너릭 클래스 여부와 상관없이 사용가능
 
 # 3. 주요 사용법
 기타 알기 쉬운내용은 pass. 물론 기준은 나
@@ -55,7 +55,47 @@ public void handleSuperWildCard(List<? super SuperSomeThingClass> someThingList)
 ```
 위의 두 줄은 서로 같다. 컴파일 시, String 라는걸 유추 가능함(생략 가능). jdk 1.7 이상만 가능
 ### 3.3 제너릭 메소드
-    일단 보류
+#### 3.3.1 제너릭 클래스와 상관없이 독립적으로 사용가능
+```java
+private static <T extends SubSomeThingClass> boolean isEquals1(T s1, T s2){
+
+    int s1Code = s1.hashCode();
+    int s2Code = s2.hashCode();
+
+    return s1Code == s2Code;
+}
+```
+위의 isEquals1 메소드는 제너릭 클래스에서 사용한 메소드도 아니지만 T를 사용이 가능하다. 이는 제너릭 메소드를 선언하여 사용하기에 가능.
+
+추가로 제너릭을 사용 시, 원래는 static하게 만들 수 없지만 제너릭 메소드는 완전 독립적으로 사용이 가능하며, 제너릭 클래스에서 사용한다
+
+하더라도 위에서 T는 클래스에서 선언한 T와 별개의 타입이 된다.
+
+#### 3.3.2 중복된 소스를 줄여줌
+```java
+private static <T extends SubSomeThingClass> boolean isEquals2(SubGenerics<T> s1, SubGenerics<T> s2){
+
+    int s1Code = s1.hashCode();
+    int s2Code = s2.hashCode();
+
+    return s1Code == s2Code;
+}
+```
+
+```java
+private static boolean isEquals3(
+        SubGenerics<? extends SubSomeThingClass> s1
+        , SubGenerics<? extends SubSomeThingClass> s2){
+
+    int s1Code = s1.hashCode();
+    int s2Code = s2.hashCode();
+
+    return s1Code == s2Code;
+}
+```
+위의 두 소스는 같은 역할을 한다. 차이점은 매개변수 타입을 제너릭 메소드로 선언해서 한곳에서 관리하느냐(위에꺼)
+
+매개변수 타입을 매개변수를 나열할 때 쓰느냐(밑에 소스) 차이점이 된다.
 
 # 4. 주의할점
 ```java
