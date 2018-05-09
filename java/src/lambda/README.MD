@@ -153,8 +153,8 @@ Function과 Predicate에는 아래 표와 같이 각각 default method가 존재
 
 | 메소드 구분 | method | 설명 |
 | ------------- | ------------- | ------------- |
-| default | Function<V, R> compose(Function<? super V, ? extends T> before) | before Function을 실행 후, 자기 자신 Function 실행 |
-| default | Function<T, V> andThen(Function<? super R, ? extends V> after) | 자기자신 Function을 실행 후, after Function 실행 |
+| default | Function<V, R> <br/> compose(Function<? super V, ? extends T> before) | before Function을 실행 후, 자기 자신 Function 실행 |
+| default | Function<T, V> <br/> andThen(Function<? super R, ? extends V> after) | 자기자신 Function을 실행 후, after Function 실행 |
 | static  | Function<T, T> identity()  | 항등 함수를 반환 t->t |
 
 솔직히 딱히 설명할께 없다...
