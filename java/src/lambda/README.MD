@@ -137,6 +137,98 @@ replaceAll과 forEach문을 사용을 안한다면 일일이 모든 아이템을
 
 편하고 간결해졌다고 생각한다.
 
+#### 2.2.3 default method
+
+java 1.8부터 인터페이스에 default method와 static method가 추가되었다. 간단히 설명하면
+
+인터페이스에 default 또는 static으로 메소드의 구현부를 추가할 수 있다.
+
+함수형 인터페이스는 하나의 메소드만 선언할 수가 있지만 이러한 default, static 메소드는 따로 제약 없이 여러개 추가가 가능하다.
+
+이러한 특성 때문에 사용할 땐 마치 함수를 넘겨주고 내부적으로는 객체로 사용하는 듯한 느낌이다.
+
+Function과 Predicate에는 아래 표와 같이 각각 default method가 존재한다.
+
+### Function class
+
+| 메소드 구분 | method | 설명 |
+| ------------- | ------------- | ------------- |
+| default | Function<V, R> compose(Function<? super V, ? extends T> before) | before Function을 실행 후, 자기 자신 Function 실행 |
+| default | Function<T, V> andThen(Function<? super R, ? extends V> after) | 자기자신 Function을 실행 후, after Function 실행 |
+| static  | Function<T, T> identity()  | 항등 함수를 반환 t->t |
+
+솔직히 딱히 설명할께 없다...
+
+```java
+public void funcCombine(){
+    Function<String, String> before = (str)-> {
+        System.out.println("before");
+        return "before"+str;
+    };
+
+    Function<String, String> after = (str)-> {
+        System.out.println("after");
+        return str+"after";
+    };
+
+    Function<String, String> combine = before.andThen(after);
+    String resultStr = combine.apply("문자열");
+
+    System.out.println(resultStr);
+    /*
+    before
+    after
+    before문자열after
+    */
+}
+```
+
+Function class를 활용하여 함수를 합성하여 새로운 함수를 만들어 낼 수가 있다.
+
+compose와 andthen의 차이는 그저 어떤게 먼저 실행 될 지 차이고, 소스 자체가 몇줄 되지 않아 소스 까보는것도 괜찬은 방법이다.
+
+### Predicate class
+
+| 메소드 구분 | method | 설명 |
+| ------------- | ------------- | ------------- |
+| default | Predicate&lt;T&gt; and(Predicate<? super T> other) | 자기 자신 결과와 other Predicate 결과 and 연산 |
+| default | Predicate&lt;T&gt; negate() | 자기자신 결과를 not 연산 |
+| default  | Predicate&lt;T&gt; or(Predicate<? super T> other)  | 자기 자신 결과와 other Predicate 결과 or 연산 |
+| static | Predicate&lt;T&gt; isEqual(Object targetRef) | 입력받은 object와 같은지 비교하는 Predicate을 반환한다 |
+
+
+```java
+public void funcCombine(){
+    Predicate<String> isTrue = (str)->str.equals(Boolean.toString(true));
+    Predicate<String> isFalse = (str)->str.equals(Boolean.toString(false));
+
+    Predicate<String> onlyFalse = isTrue.and(isFalse);
+    Predicate<String> onlyTrue = onlyFalse.negate();
+    Predicate<String> mayBeTrue = isTrue.or(isFalse);
+
+    boolean onlyFalseResult = onlyFalse.test("true");
+    boolean onlyTrueResult = onlyTrue.test("true");
+    boolean byInputResult = mayBeTrue.test("false");
+
+    System.out.println("only false : "+onlyFalseResult);
+    System.out.println("only true : "+onlyTrueResult);
+    System.out.println("may be true : "+byInputResult);
+    /*
+    only false : false
+    only true : true
+    by input : true
+    */
+}
+```
+Predicate를 활용해서 함수를 만들고, and, or not 연산을 실행할 수가 있다.
+
+이것도 간단하게 구현이 되어 있어서 혹시나마 이해가 안된다면 소스 까보는것도 괜찬다.
+
+
+    아무튼 이런식으로 함수형 인터페이스를 사용함으로써 꽤나 유용하고,
+    
+    javascript 디자인 패턴에서 커링(currying) 같은것도 충분히 구현이 가능할꺼 라고 본다.
+
 # 3 주의할점 및 기타 활용
 ### 3.1 외부 변수는 별다른 선언이 없어도 final하다. 아래 소스는 1.8 버전 기준
     
@@ -174,10 +266,10 @@ java에서 closure를 사용할 수 있는데, 다른 쪽에서 설명하기도 
 
 혹시나 closure 개념을 모른다면 javascript를 참고하자.
 ```java
-public static Function getFunction(){
+public static Function<Integer, Integer> getFunction(){
     int num = 10;
 
-    return (Function<Integer, Integer>) n ->  n*num;
+    return n ->  n*num;
 }
 ```
 위 static method는 Function(Interface이다)의 구현체를 반환하는 메소드가 되겠다.

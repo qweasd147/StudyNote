@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 public class LambdaMain {
@@ -17,7 +18,9 @@ public class LambdaMain {
 
         //mainInstance.collectionDefaultMethod(); //콜렉션 프레임워크에서 람다 활용
 
-        mainInstance.methodReference();         //메소드 참조
+        //mainInstance.methodReference();         //메소드 참조
+
+        mainInstance.funcCombine();                 //함수 합성
     }
 
     public void lambdaBase(){
@@ -53,10 +56,10 @@ public class LambdaMain {
         System.out.println("function apply result : "+result);
     }
 
-    public Function getFunction(){
+    public Function<Integer, Integer> getFunction(){
         int num = 10;
 
-        return (Function<Integer, Integer>) n ->  n*num;
+        return n ->  n*num;
     }
 
     public Function getFunction2(){
@@ -97,5 +100,38 @@ public class LambdaMain {
         notUseReference.accept("only Lambda!");
 
         useReference.accept("use Method Reference!");
+    }
+
+    public void funcCombine(){
+        Function<String, String> before = (str)-> {
+            System.out.println("before");
+            return "before"+str;
+        };
+
+        Function<String, String> after = (str)-> {
+            System.out.println("after");
+            return str+"after";
+        };
+
+        Function<String, String> combine = before.andThen(after);
+        String resultStr = combine.apply("문자열");
+
+        System.out.println(resultStr);
+
+
+        Predicate<String> isTrue = (str)->str.equals(Boolean.toString(true));
+        Predicate<String> isFalse = (str)->str.equals(Boolean.toString(false));
+
+        Predicate<String> onlyFalse = isTrue.and(isFalse);
+        Predicate<String> onlyTrue = onlyFalse.negate();
+        Predicate<String> mayBeTrue = isTrue.or(isFalse);
+
+        boolean onlyFalseResult = onlyFalse.test("true");
+        boolean onlyTrueResult = onlyTrue.test("true");
+        boolean byInputResult = mayBeTrue.test("false");
+
+        System.out.println("only false : "+onlyFalseResult);
+        System.out.println("only true : "+onlyTrueResult);
+        System.out.println("may be true : "+byInputResult);
     }
 }
