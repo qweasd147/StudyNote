@@ -6,7 +6,7 @@
     
 # 2. 장점
 
-### 2.1 형변환을 줄임. 안정성을 높임
+### 2.1 형변환을 줄이고, 안정성을 높임
 ```java
 public void safeNunSafe(){
     SubGenerics unsafeSub = new SubGenerics();
@@ -25,14 +25,36 @@ public void safeNunSafe(){
 이런식으로 가져올떄 형변환을 할 필요가 없다(객체 타입이 보장됨).
 
 ### 2.2 와일드 카드를 사용함으로써 코드 확장성을 자유롭게 함
-    귀찮아서 소스 코드 생략. 첨부된 소스 코드를 보자(mainInstance.wildCard 실행)
+    '?', 'super', 'extends'를 써서 확장성을 높임
+    
+    첨부된 소스 코드를 보자(mainInstance.wildCard 실행)
 
 ### 2.3 제너릭 메소드의 사용
-    중복된 소스와 제너릭 클래스 여부와 상관없이 사용가능
+    중복된 소스를 줄이고 제너릭 클래스 여부와 상관없이 사용가능
 
 # 3. 주요 사용법
-기타 알기 쉬운내용은 pass. 물론 기준은 나
-### 3.1 와일드 카드 확장
+
+### 3.1 기본 사용법
+```java
+public class SuperGenerics<T> {
+    private T item;
+
+    public T getItem() {
+        return item;
+    }
+
+    public void setItem(T item) {
+        this.item = item;
+    }
+}
+```
+
+제너릭을 사용하는 이유는 타입을 자유롭게 받아 처리할 수 있다는 점이다. 기본적으로 클래스 명 옆에 사용할 타입들을
+
+선언해 놓고(여러개 가능) 그 타입을 맞춰 각 필드, 메소드에서 지정된 타입을 매칭 시켜 사용하면 된다.
+
+
+### 3.2 와일드 카드 확장
 ```java
 public void handleSubWildCard(List<? extends SuperSomeThingClass> someThingList) {
     //some thing...
@@ -48,14 +70,14 @@ public void handleSuperWildCard(List<? super SuperSomeThingClass> someThingList)
 
 ? -> 아무거나. 사실상 ? extends Object
 
-### 3.2 타입 추론이 가능함
+### 3.3 타입 추론이 가능함
 ```java
     SubGenerics<String> safeSub2 = new SubGenerics<>();    
     SubGenerics<String> safeSub2 = new SubGenerics<String>();
 ```
 위의 두 줄은 서로 같다. 컴파일 시, String 라는걸 유추 가능함(생략 가능). jdk 1.7 이상만 가능
-### 3.3 제너릭 메소드
-#### 3.3.1 제너릭 클래스와 상관없이 독립적으로 사용가능
+### 3.4 제너릭 메소드
+#### 3.4.1 제너릭 클래스와 상관없이 독립적으로 사용가능
 ```java
 private static <T extends SubSomeThingClass> boolean isEquals1(T s1, T s2){
 
@@ -71,7 +93,7 @@ private static <T extends SubSomeThingClass> boolean isEquals1(T s1, T s2){
 
 하더라도 위에서 T는 클래스에서 선언한 T와 별개의 타입이 된다.
 
-#### 3.3.2 중복된 소스를 줄여줌
+#### 3.4.2 중복된 소스를 줄여줌
 ```java
 private static <T extends SubSomeThingClass> boolean isEquals2(SubGenerics<T> s1, SubGenerics<T> s2){
 
