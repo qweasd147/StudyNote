@@ -1,6 +1,6 @@
 ﻿# Prototype.
 
-모든 소스 내용은 chrome 기준으로 작성되었습니다. 다른 브라우저로는 테스트 해보지 않았지만 __proto__ 는 비표준이기 때문에
+모든 소스 내용은 chrome 기준으로 작성되었습니다. 다른 브라우저로는 테스트 해보지 않았지만 `__proto__` 는 비표준이기 때문에
 
 아래 내용과 다른 결과를 볼 수 있습니다.
 
@@ -9,7 +9,7 @@ javascript 함수를 선언 시 생성되는 프로퍼티로 new를 사용하여
 
 객체를 정의한 프로퍼티가 되며, prototype을 통해 타 객체 지향 언어의 클래스, 상속 등에 사용이 된다.
 
-추가적으로 아래에 설명할 [[Prototype]]과 __proto__ 는 사실상 같은 객체를 말하고,
+추가적으로 아래에 설명할 `[[Prototype]]`과 `__proto__`는 사실상 같은 객체를 말하고,
 
 [[Prototype]]와 Prototype은 비슷하지만 다른 목적으로 생성되어 진다(결국은 다르다!).
 
@@ -17,7 +17,8 @@ javascript 함수를 선언 시 생성되는 프로퍼티로 new를 사용하여
 # 2. 주요 내용
 ### 2.1 Prototype을 사용한 객체 인스턴스
 
-    ※주의 원래 javascript에선 인스턴스라는 개념이 존재하지 않는다. 다른 객체지향 언어와 비교하여 이해하기 쉽게 하기 위해서 인스턴스라는 단어를 사용했을 뿐. 자세한건 주의사항에서 설명.
+    ※주의 원래 javascript에선 인스턴스라는 개념이 존재하지 않는다.
+    다른 객체지향 언어와 비교하여 이해하기 쉽게 하기 위해서 인스턴스라는 단어를 사용했을 뿐. 자세한건 주의사항에서 설명.
 
 
 ```javascript
@@ -39,17 +40,19 @@ foo.setName("name1");
 console.log(foo.getName());
 ```
 
-Foo 함수에서 Foo.prototype의 각 프로퍼티에 함수를 정의 후, 해당 함수의 new로 호출 하면 반환된 객체에 메소드가 생긴다(foo.setName, foo.getName).
+`Foo` 함수에서 `Foo.prototype`의 각 프로퍼티에 함수를 정의 후, 해당 함수의 new로 호출 하면 반환된 객체에 메소드가 생긴다(`foo.setName`, `foo.getName`).
 
 ### 2.2 [[Prototype]]
 
-prototype 링크, __proto__ 라고도 불리는 객체로, 자신의 프로토타입을 가리킨다(링크 시킨다).
+prototype 링크 또는 `__proto__` 라고도 불리는 객체로, 자신의 프로토타입을 가리킨다(링크 시킨다).
 
-원래 정식 명칭은 [[Prototype]] 이고, 이 프로퍼티는 객체의 내부적으로 사용 용도로 사용되지만, 크롬 기준 __proto__ 라는 프로퍼티로
+원래 정식 명칭은 `[[Prototype]]` 이고, 이 프로퍼티는 객체의 내부적으로 사용 용도로 사용되지만, 크롬 기준
 
-생성되어 접근이 가능하다. 대부분 브라우저에서 지원하는것으로 알고 있긴한데, 어쨋든 __proto__라는 객체는 비표준으로, 브라우저에 따라 생성되지 않을 수 있다.
+`__proto__` 라는 프로퍼티 로 생성되어 접근이 가능하다. 대부분 브라우저에서 지원하는것으로 알고 있긴한데,
 
-[[Prototype]]는 객체가 생성 될 때, 그 객체의 프로토타입이 되는 객체의 Prototype 객체를 링크 시킨다.
+어쨋든 `__proto__`라는 객체는 자바스크립트 비표준으로 브라우저에 따라 생성되지 않을 수 있다.
+
+`[[Prototype]]`는 객체가 생성 될 때 그 객체의 프로토타입이 되는 객체의 Prototype 객체를 링크 시킨다.
 
 ```javascript
 function Bar(){}
@@ -59,7 +62,9 @@ var bar = new Bar();
 Bar.prototype === bar.__proto__;    // true
 ```
 
-위 소스와 같이 new를 사용하여 객체를 생성 시, 생성된 객체의 [[Prototype]] 링크는 자신의 주체가 되는 Prototype을 찾아 그 객체를 연결 시킨다.
+위 소스와 같이 `new`를 사용하여 객체를 생성 시, 생성된 객체의 `[[Prototype]]` 링크는 자신의 주체가 되는 Prototype을 찾아
+
+그 객체를 연결 시킨다.
 
 ### 2.3 Prototype, [[Prototype]]
 
@@ -83,39 +88,43 @@ foo.__proto__ === Foo.Prototype; //true
 위 소스를 보면서 2.1과 2.2 내용을 종합하고 기타 내용을 추가하여 단계별로 설명하자면 
 
 #### 1. 모든 함수는 생성 시 Prototype 프로퍼티가 생성되며, Prototype 프로퍼티 안에는 constructor 라는 프로퍼티가 생긴다.
-#### 2. 생성 된 constructor는 자기 함수 원형을 담고 있다(Foo.prototype.constructor === Foo).
+#### 2. 생성 된 constructor는 자기 함수 원형을 담고 있다(`Foo.prototype.constructor === Foo`).
 #### 3. Constructor와 해당 함수는 서로 환형 참조를 이루고 있다.
     
+    ```javascript
     Foo.prototype.constructor === Foo   //true
     Foo.prototype.constructor.prototype.constructor === Foo //true
     ....
     Foo.prototype === Foo.prototype.constructor.prototype   //true
     Foo.prototype === Foo.prototype.constructor.prototype.constructor.prototype //true
     ...
+    ```
 
 #### 4. 함수를 new를 통하여 호출 시, 해당 함수를 호출하여 새로운 객체를 생성한다.
-#### 5. 이때 생성된 객체의 [[Prototype]] 링크(__proto__)는 Foo.Prototype을 가리킨다.
+#### 5. 이때 생성된 객체의 `[[Prototype]]` 링크(`__proto__`)는 `Foo.Prototype`을 가리킨다.
     
-    따라서 위 소스에서 foo.__proto__ === Foo.Prototype 는 true를 반환한다.
+    따라서 위 소스에서 `foo.__proto__ === Foo.Prototype` 는 true를 반환한다.
 
 
-위의 과정을 거치면서 Foo.Prototype에 지정된 프로퍼티는 new로 생성 된 객체에 [[Prototype]] 링크를 통해 그대로 사용이 가능하다.
+위의 과정을 거치면서 Foo.Prototype에 지정된 프로퍼티는 new로 생성 된 객체에 `[[Prototype]]` 링크를
 
-Foo.Prototype은 new를 사용한 객체 생성 시에만 영향력이 있고 그 외의 상황에선 일반적으로 사용되지 않는다.
+통해 그대로 사용이 가능하다. Foo.Prototype은 `new`를 사용한 객체 생성 시에만 영향력이 있고
 
-참고사항으로 모든 객체는 생성 시 [[Prototype]] 링크(__proto__)를 가지게 되는데, Foo.prototype도 객체이므로 __proto__ 프로퍼티를 갖게 된다.
+그 외의 상황에선 일반적으로 사용되지 않는다. 참고사항으로 모든 객체는 생성 시 `[[Prototype]]` 링크(`__proto__`)를
 
-따라서 foo.__proto__는 Foo.prototype을 바라보게 되므로 foo.__proto__.__proto__ 프로퍼티가 존재하게 된다. 이런식으로
+가지게 되는데, `Foo.prototype`도 객체이므로 `__proto__` 프로퍼티를 갖게 된다.
 
-해당 프로퍼티의 프로퍼티를 계속하여 타고 올라가는 것을 프로토타입 체이닝 이라고 한다.
+따라서 `foo.__proto__`는 `Foo.prototype`을 바라보게 되므로 `foo.__proto__.__proto__` 프로퍼티가 존재하게 된다.
 
-위 소스는 체이닝이 짧아서 Foo.prototype.__proto__ 는 Object 함수를 링크 시키지만 상속을 통하여 체이닝을 늘려갈수 있게된다.
+이런식으로 해당 프로퍼티의 프로퍼티를 계속하여 타고 올라가는 것을 프로토타입 체이닝 이라고 한다.
 
-한가지 덫붙이자면 객체 리터럴 형태로 객체를 만들어도 똑같이 __proto__ 프로퍼티가 생기며, 이는 모든 프로퍼티 체이닝의 마지막인
+위 소스는 체이닝이 짧아서 `Foo.prototype.__proto__`는 Object 함수를 링크 시키지만 상속을 통하여
 
-Object.prototype을 가리키게 된다(여기서 나온 Object도 함수인것을 잊지말자!
+체이닝을 늘려갈수 있고, 한가지 덫붙이자면 객체 리터럴 형태로 객체를 만들어도 똑같이 `__proto__` 프로퍼티가 생기며,
 
-(Object instanceof Function //true).
+이는 모든 프로퍼티 체이닝의 마지막인 Object.prototype을 가리키게 된다(여기서 나온 Object도 함수인것을 잊지말자!)
+
+`Object instanceof Function; //true`
 
 ```javascript
 var obj = {};
@@ -134,25 +143,35 @@ Foo.apply;  // 존재함
 Foo.bind;   // 존재함
 ```
 
-Foo에 apply와 bind가 존재하는 이유는 Foo.__proto__ 가 Function.prototype을 바라보기 때문이다. (참고로 프로퍼티 접근 시 __proto__ 는 생략 가능하다)
+Foo에 apply와 bind가 존재하는 이유는 `Foo.__proto__` 가 `Function.prototype`을 바라보기 때문이다.
 
-이는 Foo가 컴파일 될 시, Function을 생성자로 한 객체가 생성 되고(new Function) Function.prototype이 Foo.__proto__ 에 링크되기 때문이다.
+(참고로 프로퍼티 접근 시 `__proto__` 는 생략 가능하다)
 
-따라서 Function.prototype에 정의 된 내용를 그대로 사용 할수가 있게된다. (그렇다고 성능상 문제가 있으니, 런타임 중에 new Funtion을 사용하라는 말은 아니다.)
+이는 Foo가 컴파일 될 시, `Function`을 생성자로 한 객체가 생성 되고(`new Function`) `Function.prototype`이
 
-아무튼 이러한 과정을 거치기 때문에 사용할 수가 있지만 추가적으로 Foo.hasOwnProperty 나 Foo.valueOf 라는 프로퍼티도 존재한다. 이러한 프로퍼티는
+`Foo.__proto__`에 링크되기 때문이다. 따라서 `Function.prototype`에 정의 된 내용를 그대로 사용 할수가 있게된다.
 
-Funtion.prototype에 정의되어 있지도 않다. 하지만 사용가능한 이유는 자바스크립트의 주요 개념 중 하나가 함수도 객체라는 점이다. 또한 Funtion.prototype도 객체이기 때문에 
+(그렇다고 성능상 문제가 있으니, 런타임 중에 `new Funtion`을 사용하라는 말은 아니다.)
 
-이러한 이유들로 Function.prototype.__proto__ 는 Object.prototype 과 연결 시켜놓았다. (Function.prototype.__proto__ === Object.prototype; //true)
+아무튼 이러한 과정을 거치기 때문에 사용할 수가 있지만 추가적으로 `Foo.hasOwnProperty` 나 `Foo.valueOf` 라는 프로퍼티도
 
-정리하면 Foo 의 prototype(원형)은 Function이고, Function의 prototype은 Object가 된다. 따라서 Foo의 'hasOwnProperty' 프로퍼티 접근 시
+존재한다. 이러한 프로퍼티는 `Funtion.prototype`에 정의되어 있지도 않다. 하지만 사용가능한 이유는 자바스크립트의 주요 개념 중 하나가
 
-Foo.__proto__.__proto__ 까지 올라가서 정의된 hasOwnProperty를 호출하게 된다.(다시 한번 말하자면 프로퍼티 접근 시 __proto__ 는 생략 가능)
+함수도 객체라는 점이다. 또한 `Funtion.prototype`도 객체이기 때문에 이러한 이유들로 `Function.prototype.__proto__` 는
 
-물론 중간에 Function.prototype.hasOwnProperty = ~~ 로 정의 해놓지만 않았다는 가정이다.
+`Object.prototype` 과 연결 시켜놓았다. (`Function.prototype.__proto__ === Object.prototype; //true`)
 
-이런 식으로 자기 자신의 프로퍼티 부터 조사하여 자신과 링크된 원형([[Prototype]] 또는 __proto__)을 순차적으로 방문하면서 프로퍼티를 찾는것을 프로토타입 체이닝이라고 한다.
+정리하면 Foo 의 prototype(원형)은 Function이고, Function의 prototype은 Object가 된다. 따라서 Foo의 'hasOwnProperty'
+
+프로퍼티 접근 시 `Foo.__proto__.__proto__` 까지 올라가서 정의된 hasOwnProperty를 호출하게 된다.
+
+(다시 한번 말하자면 프로퍼티 접근 시 `__proto__` 는 생략 가능)
+
+물론 중간에 `Function.prototype.hasOwnProperty = ~~` 로 정의 해놓지만 않았다는 가정이다.
+
+이런 식으로 자기 자신의 프로퍼티 부터 조사하여 자신과 링크된 원형(`[[Prototype]]` 또는 `__proto__`)을 순차적으로 방문하면서
+
+프로퍼티를 찾는것을 프로토타입 체이닝이라고 한다.
 
 ### 2.5 상속
 
@@ -188,9 +207,9 @@ console.log(a.myName());     //"a"
 console.log(a.myLabel());    //"obj a"
 ```
 
-위 소스는 prototype을 통해서 상속을 구현하고 있다. 여기서 핵심은 Bar.prototype = Object.create(Foo.prototype);라고 할수 있는데
+위 소스는 `prototype`을 통해서 상속을 구현하고 있다. 여기서 핵심은 `Bar.prototype = Object.create(Foo.prototype);`
 
-먼저 Object.create는 새로운 객체를 생성하고 입력된 객체를 [Prototype]]으로 연결한다.
+라고 할수 있는데 먼저 `Object.create`는 새로운 객체를 생성하고 입력된 객체를 `[Prototype]]`으로 연결한다.
 
 ```javascript
 var createdObj = Object.create(obj);
@@ -200,11 +219,11 @@ createdObj.__proto__ === obj;    //true
 
 위 소스는 obj 값이 null일 때도 성립한다.
 
-따라서 new Bar()로 생성되는 모든 객체는 프로토타입 체이닝을 통해 Foo와 연결된 객체를 프로토 타입으로 생성되게 된다.
+따라서 `new Bar()`로 생성되는 모든 객체는 프로토타입 체이닝을 통해 `Foo`와 연결된 객체를 프로토 타입으로 생성되게 된다.
 
-다시 정리하면 Bar.prototype은 결과적으로 Foo.prototype을 복사한 객체(Object.create 사용해서)를 집어넣고
+다시 정리하면 `Bar.prototype`은 결과적으로 `Foo.prototyp`e을 복사한 객체(`Object.create` 사용해서)를 집어넣고
 
-확장(Bar.prototype.myLabel = function ~)해서 사용했다고 볼수 있다.
+확장(`Bar.prototype.myLabel = function ~`)해서 사용했다고 볼수 있다.
 
 말이 조금 어려울 수도 있는데 코드로 보면
 
@@ -219,22 +238,24 @@ var bar = new Bar();
 bar.__proto__ === Bar.prototype;            //true
 bar.__proto__.__proto__ === Foo.prototype;  //true
 ```
-__proto__ 인 [[Prototype]]을 통해서 어느 객체에 링크 되어있는지 확인 할 수가 있다.
+`__proto__` 인 `[[Prototype]]`을 통해서 어느 객체에 링크 되어있는지 확인 할 수가 있다.
 
-마지막으로 Bar.prototype.constructor = Bar; 문장은 Bar.prototype.constructor는 따로 정의하지 않아서 프로토 타입 체이닝을 통해
+마지막으로 `Bar.prototype.constructor = Bar;` 문장은 `Bar.prototype.constructor`를 따로 정의하지 않아서
 
-Foo.prototype.constructor까지 그대로 올라가게 된다. 이러한 것을 막기 위해 정의해 놓은 것이다.
+프로토 타입 체이닝을 통해 `Foo.prototype.constructor`까지 그대로 올라가게 된다.
+
+이러한 것을 막기 위해 정의해 놓은 것이다.
 
 
 # 3. 주의사항
 
-### 3.1 [[Prototype]] 링크 또는 __proto__ 는 단지 객체의 prototype에 링크 시킨다.
+### 3.1 `[[Prototype]]` 링크 또는 `__proto__` 는 단지 객체의 prototype에 링크 시킨다.
 
 일반 다른 클래스 언어는 클래스를 선언 후, 해당 클래스를 마구 찍어내듯 복사 하는 형식으로 인스턴스화 한다.
 
-하지만 자바스크립트는 Prototype을 서로 연결해주는것으로 인스턴스화 한다. 엄밀히 말하면 다른 객체지향 클래스의 인스턴스와는
+하지만 자바스크립트는 Prototype을 서로 연결해주는것으로 인스턴스화 한다. 엄밀히 말하면 다른 객체지향 클래스의
 
-다른 개념이기 때문에, javascript에서 인스턴스화는 맞는 말은 아니다.
+인스턴스와는 다른 개념이기 때문에, javascript에서 인스턴스화는 맞는 말은 아니다.
 
 ```javascript
 function Foo(){}
@@ -251,11 +272,11 @@ beforeDef.show();   //show
 afterDef.show();    //show
 ```
 
-[[Prototype]] 링크를 통해서 링크 되었다는 점은 위 소스에 보면 메소드를 정의 하기 전에 객체를 생성하거나,
+`[[Prototype]]` 링크를 통해서 링크 되었다는 점은 위 소스에 보면 메소드를 정의 하기 전에 객체를 생성하거나,
 
 정의 후 생성하거나 사용할 수 있다는 점을 통하여 확인할 수 있다.
 
-### 3.2 bind를 통한 함수 생성 시, prototype은 생성되지 않는다.
+### 3.2 `bind`를 통한 함수 생성 시, `prototype`은 생성되지 않는다.
 
 ```javascript
 function Foo(){}
@@ -266,8 +287,8 @@ Bar.prototype;  //undefined
 new Bar().__proto__ === Foo.prototype;    //true
 ```
 
-모든 함수는 생성 시, Prototype 프로퍼티가 생성되고, 그 안에 constructor 라는 프로퍼티가 생성된다고 하였다.
+모든 함수는 생성 시, `Prototype` 프로퍼티가 생성되고, 그 안에 `constructor` 라는 프로퍼티가 생성된다고 하였다.
 
-하지만 Function.bind를 통해서 함수를 생성 시, prototype은 생성되지 않는다. 왜 그렇게 만든지는 모르겠지만, 일단
+하지만 `Function.bind`를 통해서 함수를 생성 시, prototype은 생성되지 않는다. 왜 그렇게 만든지는 모르겠지만, 일단
 
 bind 된 함수를 new를 통해 객체 생성 시, 기존 함수의 prototype으로 연결된다.
