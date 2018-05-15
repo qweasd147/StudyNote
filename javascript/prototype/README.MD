@@ -1,8 +1,8 @@
 ﻿# Prototype.
 
-모든 소스 내용은 chrome 기준으로 작성되었습니다. 다른 브라우저로는 테스트 해보지 않았지만 `__proto__` 는 비표준이기 때문에
+모든 소스 내용은 chrome 기준으로 작성되었습니다. 다른 브라우저로는 테스트 해보지 않았지만 `__proto__` 는
 
-아래 내용과 다른 결과를 볼 수 있습니다.
+비표준이기 때문에 아래 내용과 다른 결과를 볼 수 있습니다.
 
 # 1. 정의
 javascript 함수를 선언 시 생성되는 프로퍼티로 new를 사용하여 새로운 객체를 생성 시, 말그대로 prototype(원형)이 되는
@@ -90,20 +90,19 @@ foo.__proto__ === Foo.Prototype; //true
 #### 1. 모든 함수는 생성 시 Prototype 프로퍼티가 생성되며, Prototype 프로퍼티 안에는 constructor 라는 프로퍼티가 생긴다.
 #### 2. 생성 된 constructor는 자기 함수 원형을 담고 있다(`Foo.prototype.constructor === Foo`).
 #### 3. Constructor와 해당 함수는 서로 환형 참조를 이루고 있다.
-    
-    ```javascript
+```javascript
     Foo.prototype.constructor === Foo   //true
     Foo.prototype.constructor.prototype.constructor === Foo //true
-    ....
+    //....
     Foo.prototype === Foo.prototype.constructor.prototype   //true
     Foo.prototype === Foo.prototype.constructor.prototype.constructor.prototype //true
-    ...
-    ```
+    //...
+```
 
 #### 4. 함수를 new를 통하여 호출 시, 해당 함수를 호출하여 새로운 객체를 생성한다.
 #### 5. 이때 생성된 객체의 `[[Prototype]]` 링크(`__proto__`)는 `Foo.Prototype`을 가리킨다.
     
-    따라서 위 소스에서 `foo.__proto__ === Foo.Prototype` 는 true를 반환한다.
+    따라서 위 소스에서 foo.__proto__ === Foo.Prototype 는 true를 반환한다.
 
 
 위의 과정을 거치면서 Foo.Prototype에 지정된 프로퍼티는 new로 생성 된 객체에 `[[Prototype]]` 링크를
@@ -124,9 +123,10 @@ foo.__proto__ === Foo.Prototype; //true
 
 이는 모든 프로퍼티 체이닝의 마지막인 Object.prototype을 가리키게 된다(여기서 나온 Object도 함수인것을 잊지말자!)
 
-`Object instanceof Function; //true`
 
 ```javascript
+Object instanceof Function; //true
+
 var obj = {};
 
 obj.__proto__ === Object.prototype; //true
@@ -143,7 +143,7 @@ Foo.apply;  // 존재함
 Foo.bind;   // 존재함
 ```
 
-Foo에 apply와 bind가 존재하는 이유는 `Foo.__proto__` 가 `Function.prototype`을 바라보기 때문이다.
+`Foo`에 `apply`와 `bind`가 존재하는 이유는 `Foo.__proto__` 가 `Function.prototype`을 바라보기 때문이다.
 
 (참고로 프로퍼티 접근 시 `__proto__` 는 생략 가능하다)
 
@@ -161,7 +161,7 @@ Foo에 apply와 bind가 존재하는 이유는 `Foo.__proto__` 가 `Function.pro
 
 `Object.prototype` 과 연결 시켜놓았다. (`Function.prototype.__proto__ === Object.prototype; //true`)
 
-정리하면 Foo 의 prototype(원형)은 Function이고, Function의 prototype은 Object가 된다. 따라서 Foo의 'hasOwnProperty'
+정리하면 Foo 의 prototype(원형)은 `Function`이고, `Function`의 prototype은 Object가 된다. 따라서 Foo의 'hasOwnProperty'
 
 프로퍼티 접근 시 `Foo.__proto__.__proto__` 까지 올라가서 정의된 hasOwnProperty를 호출하게 된다.
 
