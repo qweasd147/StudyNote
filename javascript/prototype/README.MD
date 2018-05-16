@@ -292,3 +292,100 @@ new Bar().__proto__ === Foo.prototype;    //true
 하지만 `Function.bind`를 통해서 함수를 생성 시, prototype은 생성되지 않는다. 왜 그렇게 만든지는 모르겠지만, 일단
 
 bind 된 함수를 new를 통해 객체 생성 시, 기존 함수의 prototype으로 연결된다.
+
+### 3.3 프로토타입 가려짐
+
+constructor를 정의하면서 잠깐 말했지만 프로퍼티를 접근 시, 가장 우선순위가 높은건 자기 자신 프로퍼티이고, 체이닝을
+
+통해 점차 프로토타입에 있는 프로퍼티를 조사하게 되고 마지막 프로토타입(`Object.prototype`)까지 조사하고 없을 시
+
+최종적으로 `undefined`를 반환하게 된다.
+
+```javascript
+function Foo(){}
+
+Foo.prototype.method1 = function(){
+    console.log("Foo method1");
+}
+
+Foo.prototype.method2 = function(){
+    console.log("Foo method2");
+}
+
+function Bar(){}
+
+Bar.prototype = Object.create(Foo.prototype);
+
+Bar.prototype.method2 = function(){
+    console.log("Bar method2");
+}
+
+var bar = new Bar();
+
+bar.method1();      //Foo method1
+bar.method2();      //Bar method2
+
+bar.__proto__.method1 === Foo.prototype.method1;    //true
+bar.__proto__.method2 === Foo.prototype.method2;    //false
+```
+
+어떻게 보면 정상적인 현상이지만 getter, setter 적용 시 혼동 될 수도 있다.
+
+### 3.4 프로토타입 재정의 시 주의
+
+```javascript
+function Foo(){}
+
+Foo.prototype.method1 = function(){
+    console.log("Foo method1");
+}
+
+var foo1 = new Foo();
+
+Foo.prototype = {
+    method : function(){
+        console.log('new method');
+    }
+}
+
+var foo2 = new Foo();
+var foo3 = new Foo();
+
+foo1.method1();     //Foo method1
+foo2.method1;       //undefined
+
+foo2.method();      //new method
+foo1.method         //undefined
+
+foo1.__proto__ === foo2.__proto__;  //false
+foo2.__proto__ === foo3.__proto__;  //true
+```
+
+프로토타입에 프로퍼티를 확장하는 형태가 아니라 아예 새롭게 대입하면 그 이후에 생성된 객체들은
+
+새로운 프로토타입 객체에 링크 되고, 기존에 생성된 객체들은 기존 프로토타입 객체를 링크시킨다.
+
+### 3.5 this bind
+
+```javascript
+function Foo(name){
+    this.name = name;
+}
+
+Foo.prototype.getName = function(){
+    return this.name;
+}
+
+Foo.prototype.setName = function(name){
+    this.getName = name;
+}
+
+var foo = new Foo("name");
+
+foo.getName();              //name
+foo.__proto__.getName();    //undefined
+```
+
+`foo.__proto__.getName();`에서 this는 Foo.prototype이 된다. 프로토타입을 통하여 클래스를 구현하는건
+
+어디까지나 자바스크립트만의 특성을 이용한 일종의 꼼수이다.
