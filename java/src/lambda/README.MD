@@ -75,9 +75,9 @@ public interface Function<T, R> {
 | Interface  | Method |
 | ------------- | ------------- |
 | Function<T, R>  | R apply(T t);  |
-| Predicate<T>  | boolean test(T t);  |
-| Consumer<T>  | void accept(T t);  |
-| Supplier<T>  | T get();  |
+| Predicate&lt;T&gt;  | boolean test(T t);  |
+| Consumer&lt;T&gt;  | void accept(T t);  |
+| Supplier&lt;T&gt;  | T get();  |
 | Runnable  | void run();  |
 
 T는 type(매개변수 타입), R은 Return Type을 나타내므로, 용도는 꽤나 직관적으로 알 수 있다.
