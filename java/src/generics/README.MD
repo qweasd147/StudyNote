@@ -120,6 +120,8 @@ private static boolean isEquals3(
 매개변수 타입을 매개변수를 나열할 때 쓰느냐(밑에 소스) 차이점이 된다.
 
 # 4. 주의할점
+
+#### 4.1 extends, super 사용 시 주의 점
 ```java
     List<? extends SuperSomeThingClass> list = new ArrayList<>();
     
@@ -138,5 +140,48 @@ private static boolean isEquals3(
 ```
 이런식으로 someThing의 클래스가 어떤것인지 몰라서 내부적으로 문제가 발생한다고 한다. 클래스의 안정성을 위해서라도 이런방식은 막아두었다고 한다.
 
-
 참고 https://stackoverflow.com/questions/24861758/difference-for-super-extends-string-in-method-and-variable-declaration?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+
+#### 4.2 Exception을 확장한 클래스에서는 사용 불가
+
+Exception(정확히 Throwable)을 확장한 클래스에서는 사용이 불가능하다.
+
+```java
+    //ERROR! Generic class may not extend 'java.lang.Throwable'
+    public class BusinessException<T> extends RuntimeException{
+    }
+```
+
+제너릭을 설명하면서 빠뜨린 부분이 있는데, 제너릭을 사용하더라도 내부적으로 컴파일 되면서
+
+동적으로 제너릭 부분을 없애준다.
+
+```java
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        
+        // after compile ==> List list = new ArrayList<>();
+    }
+```
+
+꼭 이렇게 바꾸는게 아니라 제너릭 타입만 없애준다는 사실만 기억 하고, 자세한건 아래 링크 참고! 
+
+참고 : https://stackoverflow.com/questions/19253174/are-generics-removed-by-the-compiler-at-compile-time
+
+컴파일 과정중에서 제너릭 타입이 제거되면서, exception catch 과정 중에 문제가 발생하게 된다.
+
+```java
+    public static void main(String[] args) {
+        try {
+           throw new BusinessException<String>();
+        } catch (BusinessException<Integer> e) {
+           // ???
+        } catch (BusinessException<String> e) {
+           // ???
+        }
+    }
+```
+
+제너릭이 제거되면서 exception이 어디서 catch 하는지 알 수 없게 되어 막아놓았다고 한다.
+
+참고 : https://stackoverflow.com/questions/501277/why-doesnt-java-allow-generic-subclasses-of-throwable
