@@ -25,11 +25,11 @@ public class StreamMain {
 
         //mainInstance.flatStream();        //flatMap 사용
 
-        //mainInstance.streamSort();          //스트림 정렬
+        mainInstance.streamSort();          //스트림 정렬
 
         //mainInstance.streamMap();          //스트림 map 사용
 
-        mainInstance.collectorImpl();          //collector 구현
+        //mainInstance.collectorImpl();          //collector 구현
     }
 
     public void baseStream(){

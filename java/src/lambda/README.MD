@@ -150,7 +150,7 @@ java 1.8부터 인터페이스에 default method와 static method가 추가되�
 
 ### Function class
 
-| 메소드 구분 | method | 설명 |
+| 구분 | method | 설명 |
 | ------------- | ------------- | ------------- |
 | default | Function<V, R> <br/> compose(Function<? super V, ? extends T> before) | before Function을 실행 후, 자기 자신 Function 실행 |
 | default | Function<T, V> <br/> andThen(Function<? super R, ? extends V> after) | 자기자신 Function을 실행 후, after Function 실행 |
@@ -188,7 +188,7 @@ compose와 andthen의 차이는 그저 어떤게 먼저 실행 될 지 차이고
 
 ### Predicate class
 
-| 메소드 구분 | method | 설명 |
+| 구분 | method | 설명 |
 | ------------- | ------------- | ------------- |
 | default | Predicate&lt;T&gt; and(Predicate<? super T> other) | 자기 자신 결과와 other Predicate 결과 and 연산 |
 | default | Predicate&lt;T&gt; negate() | 자기자신 결과를 not 연산 |
