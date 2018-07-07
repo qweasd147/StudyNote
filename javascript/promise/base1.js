@@ -6,7 +6,7 @@ function after2sec(){
 
           reject("첫번째 결과물 에러");
        },2000);
-    })
+    });
  }
 
 after2sec()
