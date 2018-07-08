@@ -205,18 +205,176 @@ primitive한 값들을 간단하게 `promise` 객체로 만들어서 처리가 �
 
 # 3. 체이닝하여 사용
 
-### 3.1 체이닝 시 실행 순서
+`promise`는 순서를 보장하기 위하여 여러 함수를 체이닝하여 사용이 가능하다.
+
+```javascript
+
+promise1()
+.then(promise2)
+.then(promise3)
+
+...
+
+```
+
+### 3.1 에러 발생 시 실행 순서
+
+에러 발생 시, 가장 첫번째 `catch`에서 에러를 처리 후, 정상적인 `then`으로 돌아와서 다시 처리를 시작한다.
+
+```javascript
+Promise.resolve("start")
+.then(function first(data){
+
+    //console.log(data);  //start
+
+    throw new Error("first ERROR");  //jump catch
+
+    return "end first";
+})
+.then(function second(data){
+    //second 함수는 무시된다.
+
+
+    //console.log(data);  //end first
+    return "end second"
+})
+.catch(function(data){
+    console.log(data.message);
+})
+.then(function(){
+    console.log('end');
+});
+
+//first ERROR
+//end
+
+```
+
+위 소스에서 `second` 함수는 실행되지 않는다. `first`에서 발생된 에러가 `catch`를 통해 가기 때문이다.
+
+그 이후에는 `catch` 이후 다음 `then`으로 돌아가 처리를 시작한다. 물론 `first` 함수는 정상 처리되고,
+
+`second` 함수에서 에러가 발생 시 `catch`에서 에러 처리 후, 다음 `then`으로 넘어간다.
 
 ### 3.2 체이닝 하여 사용시 항상 새로운 promise를 생성
 
-# 4. es8 async await
+`then` 또는 `catch`를 통해 반환 된 `promise` 객체는 항상 새롭게 생성된 `promise` 객체를 반환한다.
+
+```javascript
+var p1 = Promise.resolve("test");
+
+var p2 = p1.then(function(){});
+var p3 = p1.catch(function(){});
+
+console.log(p1 === p2);     //false
+console.log(p1 === p3);     //false
+```
+
+`promise`는 최초 `pending` 상태에서 비동기 작업이 완료 시, `resolved` 또는 `rejected` 상태로 바뀌게 되고, `then`을 통해
+
+걸려있는 함수가 있을 시, 해당 함수를 실행시키는 구조이다. 이러한 구조에서 만약 `then`에서 새로운 pending 상태인 `promise` 객체를
+
+생성하지 않으면 체이닝 하여 순서를 보장하는 일을 할수가 없게된다.
+
+(만약 기존의 `promise` 객체를 반환 시 최초 `then`의 callback 함수를 제외한 모든 `then`에 걸려있는 callback 함수는 동시에
+
+실행 될 것이다.)
+
+# 4. es8 async & await
+
+Promise는 callback hell을 완화 시킬 수 있지만 근본적으로 해결은 힘들다. 그래서 나온것이 es8의 `async`, `await`가 나와
+
+비동기 로직일 지라도 동기적으로 처리가 가능하게 되었다.
+
+    비동기 작업을 호출 시 'await' 키워드를 붙여주면 해당 비동기 작업이 완료될 때까지 다음 구분 실행을 멈추게 된다.
+    또한 await를 사용하기 위해선 함수를 정의 할때 앞에다가 'async'키워드를 붙여주어야만 사용이 가능하며, 이 키워드를
+    붙여주게 되면 해당 함수는 비동기 함수로 처리된다.
+
+참고로 아래 소스들은 arrow function, 함수 선언식, 표현식 골고루 사용하였다. 물론 헤깔리게 할 목적은 아님!
+
+```javascript
+function promise1(text){
+    return new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            return resolve(text+" END");
+        },2000);
+    });
+}
+
+function promise2(text){
+	return new Promise((resolve, reject)=>{
+		setTimeout(()=>{
+			return resolve(text+" END");
+		},3000);
+	});
+}
+
+const after5sec = async ()=>{
+    const p1Result = await promise1("첫번째 결과물");
+    const p2Result = await promise2("두번째 결과물");
+	
+	//5초 후
+	console.log("after5sec 전체 끝");
+}
+```
+
+`after5sec`함수를 실행하여 `await`를 만나면 해당 비동기 작업 처리가 완료 될때까지 대기 하게 된다. 따라서 위 소스는
+
+`promise1` 처리가 완료 후, `promise2`가 실행되므로 전체 처리하는데 약 5초가 걸리게된다.
+
+```javascript
+const after3sec = async ()=>{
+	
+    const resultArr = await Promise.all([promise1("첫번째 결과물"), promise2("두번째 결과물")]);
+    console.log("after3sec 끝..."+resultArr.toString());
+}
+```
+
+`Promise.all`을 사용 시 똑같이 `await`를 붙여주며, 반환값은 기존 `Promise.all`과 똑같이 배열 형태로 받게된다.
+
+위 소스는 비동기 작업을 같이 처리하게 되므로 약 3초 이후에 결과값을 받게 된다.
+
+    주의할 점은 비동기 함수는 기존 이벤트 루프를 배울 시, 특정 함수가 실행 중일 시 다른 함수는 절대로 실행되지
+    않는다고 하였다. 하지만 이 비동기 함수는 실행 중 특정 비동기 처리 완료를 대기 중이면 다른 함수가 실행이 가능하다.
+    얼추 어떤식으로 돌아가는지 알꺼 같지만 추측만 하는거라서 조금 더 공부가 필요할꺼 같다...
 
 # 5. 주의사항
 
 ### 5.1 pending 상태 이후,  resolved 또는 rejected 상태로 변경 시 다른 상태로 변경되지 않는다.
 
+`promise`객체는 최초 생성 시 `pending` 상태이며, 비동기 작업이 완료 시 에러 발생 여부에 따라 `resolved` 또는
+
+`rejected` 상태로 바뀌게 된다. 이후로는 다른 상태로는 절대 바뀌지 않게 된다. 따라서
+
+```javascript
+
+var pResolved = Promise.resolve("12345");
+
+pResolved.catch(function(){
+    //....
+});
+
+```
+
+위 소스의 `catch`는 절대로 발생할 수가 없다. 이후에 어떠한 변화를 주게 된다 하더라도 `pResolved`의 상태값이
+
+`resolved`에서 `rejected`으로 바뀔일은 절대 없기 때문이다.
+
 ### 5.2 파라미터는 단일값
+```javascript
+Promise.resolve(1,2,3,4,5)
+.then(function(...args){
+    console.log(args);      //[1]
+});
+
+```
+
+아무리 많은 값을 넘기고 싶어도 then에서 받을수 있는 파라미터는 하나밖에 받을 수가 없다. 따라서 여러값들을 넘겨주고
+
+싶은 경우에는 배열또는 json형태로 값을 넘겨주어야만 한다.
 
 ### 5.3 잡히지 않는 에러
 
 ### 5.4 thenable
+
+### 5.5 항상 비동기 처리
