@@ -15,7 +15,7 @@ function after4sec(){
        }, 8000);
     });
 }
-
+/*
 Promise.all([after2sec(), after4sec()])
 .then(function(arrResult){
     arrResult.forEach(function(result){
@@ -28,4 +28,23 @@ Promise.race([after2sec(), after4sec()])
 .then(function(result){
     console.log(result);
 });
+*/
 
+
+//타임아웃 구현
+function timeoutWithPromise(time){
+    time = time || 3000;
+    return new Promise(function(resolve, reject){
+        setTimeout(function(){
+            reject("타임 아웃!");
+        }, time)
+    });
+}
+
+
+Promise.race([after2sec(), timeoutWithPromise(1000)])
+.then(function(msg){
+    console.log(msg);
+}).catch(function(msg){
+    console.log(msg)
+});

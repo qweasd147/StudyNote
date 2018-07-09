@@ -4,7 +4,12 @@
 
 비동기 작업일지라도 현재 처리할 작업과 나중에 처리할 작업을 보장해주고 완벽하진 않더라도 
 
-callback hell을 벗어게 해주는데 많은 도움을 준다.
+callback hell을 벗어게 해주는데 많은 도움을 준다. 최초 `Promise` 객체는 `pending`이며,
+
+차후 비동기 작업이 완료되어 `resolved(성공)`, `rejected(실패)` 상태로 변경되면 해당 연관
+
+작업을 실행하는 구조이다.
+
 
 # 2. 주요 내용
 ### 2.1 Promise 기본 형태 with resolve
@@ -183,6 +188,28 @@ Promise.race([after2sec(), after4sec()])
 
 조용히 무시된다. 위 소스에서는 `after4sec`의 `setTimeout`은 실행 되도, `resolve`는 실행되지 않는다.
 
+이러한 특징을 이용하여 ajax 요청 timeout을 거는 경우가 많다.
+
+```javascript
+//타임아웃 구현
+function timeoutWithPromise(time){
+    time = time || 3000;
+    return new Promise(function(resolve, reject){
+        setTimeout(function(){
+            reject("타임 아웃!");
+        }, time)
+    });
+}
+
+Promise.race([callAjax(), timeoutWithPromise(1000)])
+.then(handleResponse, handleTimeout);
+```
+
+이런식으로 요청 시간(위 소스에선 1초)내 ajax 응답이 오는지 여부에 따라 핸들링이 가능하다.
+
+하지만 백단에서 connection or read timeout을 거는게 더 좋을꺼 같다는게 개인적인 생각이다...
+
+
 ### 2.5 Promise.resolve, Promise.reject
 
 두 static method는 무조건 `resolved` 또는 `rejected` 상태인 `promise` 생성을 간단하게 만들 수가 있다.
@@ -338,6 +365,23 @@ const after3sec = async ()=>{
     않는다고 하였다. 하지만 이 비동기 함수는 실행 중 특정 비동기 처리 완료를 대기 중이면 다른 함수가 실행이 가능하다.
     얼추 어떤식으로 돌아가는지 알꺼 같지만 추측만 하는거라서 조금 더 공부가 필요할꺼 같다...
 
+
+참고로 `async`, `await`를 사용하여 error 처리를 할 시에는 그냥 `try`, `catch`문을 사용하여 처리하는걸 권장하고 있다.
+
+`promise`객체를 체이닝하여 `catch`문만 보다가 쓰려니까 어색하기도 하지만 애초에 비동기 코드를 동기식 코드로 사용하기
+
+위하여 나온것이기 때문에 `try`, `catch`문을 사용하여 에러를 잡게 된다.
+
+
+```javascript
+try{
+	await Promise.reject("ERROR!");
+}catch(e){
+	console.log(e); //ERROR!
+}
+```
+
+
 # 5. 주의사항
 
 ### 5.1 pending 상태 이후,  resolved 또는 rejected 상태로 변경 시 다른 상태로 변경되지 않는다.
@@ -375,6 +419,112 @@ Promise.resolve(1,2,3,4,5)
 
 ### 5.3 잡히지 않는 에러
 
+`Promise`를 체이닝을 통한 에러 처리 시, 의도와는 다른 에러를 케치하지 못하는 상황이 올 수가 있다.
+
+```javascript
+function throwErr(){
+    throw new Error("ERROR!");
+}
+
+function handleError(err){
+    console.log(err.message);
+}
+
+
+//에러 처리를 handleError에서 잡지 못한다.
+Promise.resolve("start")
+.then(throwErr, handleError);
+```
+
+만약 `then`의 첫번째 콜백함수 파라미터에서 에러가 발생하게 되면 두번째 콜백함수에 잡을 수가 없다. 위 소스에서 `handleError`
+
+는 오직 상위 `Promise`의 처리 결과 중 에러가 발생하면 이에 호출되기 때문이다.
+
+(사실상 `Promise.resolve`를 호출하므로 왠만하면 에러를 낼 수도 없다.)
+
+따라서 `throwErr`에서 발생한 에러를 처리하기 위해서는 아래와 같은 소스로 변경해야 한다.
+
+```javascript
+Promise.resolve("start")
+.then(throwErr)
+.catch(handleError);
+```
+
+물론 상위 `Promise`객체의 에러를 캐치하기 위해 `then`을 아래와 같이 체이닝 하여 사용 할 수도 있지만 직관적으로 봐도
+
+의도를 파악하기가 힘들 수도 있어서 잘 사용하지는 않는다.
+
+```javascript
+//에러를 handleError에서 케치 할 수 있지만 차라리 catch를 쓰는게 더 낫다
+Promise.resolve("start")
+.then(throwErr)
+.then(null, handleError);
+```
+
 ### 5.4 thenable
 
+`Promise.resolve` 또는 `Promise.reject`에서 `then`을 구현하여 사용 할 수 있는 함수(말 그대로 thenable)를 넣을 시
+
+`Promise` 객체로 변환하여 사용이 가능하다. 일종의 인터페이스 구현으로 보통 `Promise` 객체가 아닌 비동기 함수의 콜백 함수
+
+등에서 필요에 따라 `Promise`처럼 사용 또는 callback 형태로 사용 하기 위하여 자주 사용한다고 한다(사실 필요성을 잘 못 느끼겠다).
+
+```javascript
+function fnThenAble(data){
+    return {
+        then : function(resolve, reject){
+            if(data){
+                resolve(data);
+            }else{
+                reject("data is falsely");
+            }
+        }
+    }
+}
+
+//resolved로 처리
+Promise.resolve(fnThenAble("data"))
+.then(function(data){
+    console.log(data);      //data
+})
+.catch(function(data){
+    console.log(data);
+});
+
+//rejected로 처리
+Promise.resolve(fnThenAble())
+.then(function(data){
+    console.log(data);
+})
+.catch(function(data){
+    console.log(data);      //data is falsely
+});
+```
+
 ### 5.5 항상 비동기 처리
+
+`resolve` 또는 `reject`함수는 항상 비동기로써 처리된다.
+
+```javascript
+var p1 = new Promise(function(resolve){
+    console.log("first message");
+
+    resolve("last message");
+});
+
+p1.then(function(data){
+    console.log(data);
+});
+
+console.log("second message");
+
+//first Message
+//second Message
+//last Message
+```
+
+맨 처음 `Promise`객체를 생성 시 'first message'가 표출되고, 그 다음 'last message'가 아닌 'second message'가 표출된다.
+
+이는 동기적으로 실행 되어 first -> last -> second 순으로 출력될 것이라 예상할수도 있겠지만 `resolve`, `reject` 함수는
+
+항상 비동기로 호출하고 있다. 혹시나 이게 왜 비동기 호출의 증거인지 궁금하면 event loop 참고!

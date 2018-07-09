@@ -29,6 +29,10 @@ const after3sec = async ()=>{
     console.log("after3sec 끝..."+resultArr.toString());
 }
 
+after5sec();
+after3sec();
+
+//error 처리
 async function errPromise(){
     //throw new Error("error");
     return "끝";
@@ -44,5 +48,4 @@ async function handleErrPromise(){
     }
 }
 
-after5sec();
-after3sec();
+handleErrPromise();
