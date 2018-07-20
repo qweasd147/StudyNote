@@ -288,6 +288,25 @@ public void baseStream(){
 ```
 스트림은 최종 연산을 수행하며 다시 재사용이 불가능하다.
 
+재사용은 불가능하지만 그래도 요청할때마다 일관된 스트림을 얻기 위해 `Supplier` 함수형 인터페이스를 사용하기도 한다.
+
+```java
+public void baseStream(){
+    //함수를 저장
+    Supplier<Stream<String>> getListStream = () -> list.stream();
+
+    getListStream.get()
+        .forEach(System.out::println);
+
+    getListStream.get()
+        .forEach(System.out::println);
+}
+```
+
+이런식으로 list의 stream을 얻는 함수(`Functional interface`)를 사용한다. 하지만 보는바와 같이 같은 스트림을
+
+재사용하는게 아니라 각각 새로운 스트림을 얻는점은 변함이 없다.
+
 
 ### 3.3 내부 작업을 반복으로 처리
 
@@ -301,6 +320,12 @@ public void baseStream(){
 당장 2.2에 있는 소스만 봐도 순서가 보장 되지 않는 것을 확인 할 수가 있다.
 
 병렬 처리 시 thread safe 관련 해서 항상 유의해야 한다(thread safe 관련 설명은 생략).
+
+참고로 공부하면서 `ArrayList`가 경우에 따라서 thread-safe하지 않을 수도 있다는 점도 알게되었다.
+
+참고. Array List(Collections)를 thread-safe하게 사용하기
+
+https://beginnersbook.com/2013/12/how-to-synchronize-arraylist-in-java-with-example/
 
 ### 3.5 병렬처리 시 sort
 
@@ -320,3 +345,60 @@ public void streamSort(){
 하지만 'forEach'메소드 대신 'forEachOrdered' 사용 시, 병렬 처리 여부에 상관없이 처리가 가능하지만
 
 병렬처리로서의 이점(속도)은 줄어든다고 한다.
+
+### 3.6 callback hell
+
+스트림안에 스트림을 처리해야 하는 경우, 이럴때 생각나는건 javascript의 callback hell이 생각이 난다.
+
+flatMap으로 해결 할 수 있으면 좋겠지만 상황이 그렇게 좋지 않을 때 개인적으로는 딱히 해결법이 떠오르지 않는다.
+
+아쉬운데로 그냥 함수(`Functional interface`)를 넘겨줘, 그나마 가독성을 해결하려고 하고 있다.
+
+```java
+public void streamSort(){
+    Map<String, List<String>> map = new HashMap<>();
+    String[] strArr = {"key1","key2","key3","key4","key5","key6","key7"};
+
+    //더미 데이터 입력
+    Stream.of(strArr).forEach(key -> map.put(key, Arrays.asList(strArr)));
+    
+    List<Set<String>> itemSetList = map.keySet()
+        .stream()
+        .map(key -> map.get(key))
+        .map(itemList ->
+                itemList
+                    .stream()
+                    .map(item -> "update" + item)
+                    .collect(Collectors.toSet()))
+        .collect(Collectors.toList());
+}
+```
+
+위 소스에서 2번째 `map`에서 다시한번 스트림을 불러와 처리를 하고 있다. 이런식으로 내부적으로 연속해서 stream을 처리하다 보면
+
+가독성이 그리 좋을꺼 같지 않다고 생각하고 있다. 그래서 2번째 `map`에 인자값으로 함수를 반환하는 메소드로 대체하여 사용하였다.
+
+```java
+public void streamSort(){
+    Map<String, List<String>> map = new HashMap<>();
+    String[] strArr = {"key1","key2","key3","key4","key5","key6","key7"};
+
+    //더미 데이터 입력
+    Stream.of(strArr).forEach(key -> map.put(key, Arrays.asList(strArr)));
+    
+    List<Set<String>> itemSetList = map.keySet()
+        .stream()
+        .map(key -> map.get(key))
+        .map(itemList -> handleItemList(itemList).get())
+        .collect(Collectors.toList());
+}
+
+private Supplier<Set<String>> handleItemList(List<String> itemList){
+    return () -> itemList
+        .stream()
+        .map(item -> "update" + item)
+        .collect(Collectors.toSet());
+}
+```
+
+이런식으로 하면 그나마 가독성이 좋아졌다고 생각하고 있다. 마치 javascript에서 thunk, currying이 생각나게 하고 있다.

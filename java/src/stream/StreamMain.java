@@ -25,11 +25,13 @@ public class StreamMain {
 
         //mainInstance.flatStream();        //flatMap 사용
 
-        mainInstance.streamSort();          //스트림 정렬
+        //mainInstance.streamSort();          //스트림 정렬
 
         //mainInstance.streamMap();          //스트림 map 사용
 
         //mainInstance.collectorImpl();          //collector 구현
+
+        mainInstance.useFnInStream();
     }
 
     public void baseStream(){
@@ -59,6 +61,15 @@ public class StreamMain {
         list.forEach(x -> System.out.println(x));
 
         //colToStream.forEach(System.out::println); ERROR!! 스트림은 소모성
+
+        //함수를 저장
+        Supplier<Stream<String>> getListStream = () -> list.stream();
+
+        getListStream.get()
+                .forEach(System.out::println);
+
+        getListStream.get()
+                .forEach(System.out::println);
     }
 
     public void streamOperator(){
@@ -251,5 +262,41 @@ public class StreamMain {
         String result = strSteam.collect(new CollectorImpl());
 
         System.out.println(result);
+    }
+
+    public void useFnInStream(){
+        Map<String, List<String>> map = new HashMap<>();
+        String[] strArr = {"key1","key2","key3","key4","key5","key6","key7"};
+
+        //더미 데이터 입력
+        Stream.of(strArr).forEach(key -> map.put(key, Arrays.asList(strArr)));
+
+        /*
+        List<Set<String>> itemSetList = map.keySet()
+                .stream()
+                .map(key -> map.get(key))
+                .map(itemList ->
+                        itemList
+                                .stream()
+                                .map(item -> "update" + item)
+                                .collect(Collectors.toSet()))
+                .collect(Collectors.toList());
+        */
+
+
+        List<Set<String>> itemSetList = map.keySet()
+            .stream()
+            .map(key -> map.get(key))
+            .map(itemList -> handleItemList(itemList).get())
+            .collect(Collectors.toList());
+
+        System.out.println(itemSetList);
+    }
+
+    private Supplier<Set<String>> handleItemList(List<String> itemList){
+        return () -> itemList
+            .stream()
+            .map(item -> "update" + item)
+            .collect(Collectors.toSet());
     }
 }
