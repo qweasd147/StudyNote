@@ -3,16 +3,21 @@ package thread;
 import thread.items.ConcreteInterface1;
 import thread.items.ConcreteInterface2;
 import thread.items.ConcreteThread;
+import thread.items.counter.Counter;
+import thread.items.counter.CounterThread;
+import thread.items.counter.SafeCounter;
+import thread.items.counter.UnsafeCounter;
 
 public class ThreadMain {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ThreadMain threadMain = new ThreadMain();
 
         //threadMain.baseThread1();
-        try {
-            threadMain.baseThread2();
-        } catch (InterruptedException e) {e.printStackTrace();}
+        //threadMain.baseThread2();
+
+        //threadMain.nonThreadSafe();
+        threadMain.threadSafeWithSync();
 
     }
 
@@ -82,9 +87,31 @@ public class ThreadMain {
         System.out.println(threadName+"..."+priority+":"+msg);
     }
 
-    public void nonSafe(){
-        int onlyZero = 0;
+    public void nonThreadSafe(){
+        Counter unsafeCounter = new UnsafeCounter();
 
+        Thread unsafeThread1 = new Thread(new CounterThread(unsafeCounter));
+        Thread unsafeThread2 = new Thread(new CounterThread(unsafeCounter));
+        Thread unsafeThread3 = new Thread(new CounterThread(unsafeCounter));
+        Thread unsafeThread4 = new Thread(new CounterThread(unsafeCounter));
 
+        unsafeThread1.start();
+        unsafeThread2.start();
+        unsafeThread3.start();
+        unsafeThread4.start();
+    }
+
+    public void threadSafeWithSync(){
+        Counter safeCounter = new SafeCounter();
+
+        Thread safeThread1 = new Thread(new CounterThread(safeCounter));
+        Thread safeThread2 = new Thread(new CounterThread(safeCounter));
+        Thread safeThread3 = new Thread(new CounterThread(safeCounter));
+        Thread safeThread4 = new Thread(new CounterThread(safeCounter));
+
+        safeThread1.start();
+        safeThread2.start();
+        safeThread3.start();
+        safeThread4.start();
     }
 }
