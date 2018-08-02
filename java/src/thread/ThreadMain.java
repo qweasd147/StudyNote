@@ -1,5 +1,6 @@
 package thread;
 
+import thread.items.CheckCallStack;
 import thread.items.ConcreteInterface1;
 import thread.items.ConcreteInterface2;
 import thread.items.ConcreteThread;
@@ -21,7 +22,8 @@ public class ThreadMain {
 
         //threadMain.nonThreadSafe();
         //threadMain.threadSafeWithSync();
-        threadMain.productConsumer();       //생산자 & 소비자
+        //threadMain.productConsumer();       //생산자 & 소비자
+        threadMain.checkCallStack();
 
     }
 
@@ -124,5 +126,10 @@ public class ThreadMain {
 
         (new Thread(new Producer(buffer))).start();
         (new Thread(new Consumer(buffer))).start();
+    }
+
+    public void checkCallStack(){
+        //new Thread(new CheckCallStack()).start();
+        new Thread(new CheckCallStack()).run();
     }
 }
