@@ -175,6 +175,14 @@ Foo.bind;   // 존재함
 
 ### 2.5 상속
 
+대표적으로 상속을 구현하기 위한 방법으로 es5에 나온 `Object.create` 함수를 이용하는 방법과 이를 직접 구현하는 방법으로
+
+나누어진다. es5 사용환경이 가능하면 `Object.create`를 사용하는게 훨씬 편하므로 사용하는걸 추천하지만, 그렇지 않으면 직접 만들어서
+
+상속을 구현해야한다. 근데 사실상 es5를 지원 안한다는거는 js 하기 싫다는거라고 생각하면 될꺼 같다.
+
+#### 2.5.1 Object.create를 사용한 상속(es5 이상)
+
 es5에서 자바스크립트의 상속은 따로 네이티브로 존재하지 않기 때문에 위에 설명한 프로토타입 체이닝을 통하여 상속을 구현하게 된다.
 
 ```javascript
@@ -245,6 +253,59 @@ bar.__proto__.__proto__ === Foo.prototype;  //true
 프로토 타입 체이닝을 통해 `Foo.prototype.constructor`까지 그대로 올라가게 된다.
 
 이러한 것을 막기 위해 정의해 놓은 것이다.
+
+#### 2.5.2 Util 상속 함수 구현
+
+2.5.1에선 `Object.create`를 사용하였지만 es5 미만에선 지원하지 않기 때문에 이 부분을 직접 구현하여 주어야 한다.
+
+그리고 어차피 상속이 목적이니깐 +@로 상속에 맞는 기능을 추가하여 유틸성 함수인 `inherit`구현 하였다.
+
+```javascript
+var inherit = (function(parent, child){
+    var F = function(){};
+
+    return function(parent, child){
+        F.prototype = parent.prototype;
+        child.prototype = new F();
+        child.prototype.constructor = child;
+        child.super = parent.prototype;
+    }
+})();
+
+function Foo(name){
+    this.name = name;
+}
+
+Foo.prototype.myName = function(){
+    return this.name;
+}
+
+function Bar(name, label){
+    Foo.call(this, name);
+    
+    this.label = label;
+}
+
+inherit(Foo, Bar);
+
+Bar.prototype.myLabel = function(){
+    return this.label;
+}
+
+var a = new Bar("a","obj a");
+
+console.log(a.myName());     //"a"
+console.log(a.myLabel());    //"obj a"
+```
+
+`inherit` 함수 내에서 싱글톤 함수인 `F`를 만들어서 child 함수를 만들때 마다 필요한 함수를 생성하지 않아도 되기 때문에 미리
+
+만들어 놓았고,(다른 언어에선 이런식으로 util성 함수를 만들어 무분별하게 사용하면 thread-safe관련 문제가 생길 수 있지만 js는 상관x)
+
+`child` 하위에 `super` 프로퍼티를 두어서 `Bar.super`를 통해 Parent 함수의 고유한 `prototype`에 접근 할 수 있게 만들어져 있다.
+
+나머지는 2.5.1 동일하다.
+
 
 
 # 3. 주의사항
