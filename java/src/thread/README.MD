@@ -52,12 +52,73 @@ thread라고 불린다. 컴퓨터에서 프로세스(process)와 thread라는 2�
     일반 스레드가 모두 종료되면 데몬 스레드는 강제적으로 자동 종료됨.
     이유는 보조적인 스레드라 종속된 일반 스레드가 종료되면 의미가 없어지게 된다. 이러한
     점만 빼면 일반 스레드와 다른점이 없음. 또한 setDaemon 메소드는 start 이전에 설정해야함
+
+### 3.4 join(다른 쓰레드의 작업을 기다린다)
+
+    쓰레드 자신이 하던 작업을 잠시 멈추고 다른 쓰레드가 지정된 시간동안 작업을 수행하도록
+    할때 join()을 사용한다. 현재 쓰레드가 아닌 특정 쓰레드에 대해 동작하는점이 sleep()과 다르다.
     
+```java
+    public void baseThread2() throws InterruptedException {
+
+        int triesCount = 0;
+
+        Thread threadForSleep = new Thread(new ConcreteInterface1());
+        threadForSleep.start();
+
+        while(threadForSleep.isAlive()){
+            printMsg("threadForSleep 아직 살아있음");
+            triesCount++;
+            threadForSleep.join(3000);  //3초간 스레드 종료를 기다리고, 3초가 지나면 넘어감.
+
+            if(triesCount > 2){
+                printMsg("강제 인터럽트");
+                threadForSleep.interrupt();
+                threadForSleep.join();          //스레드가 종료할때까지 무한 대기
+            }
+        }
+
+        System.out.println("threadForSleep 스레드 종료");
+    }
+```
+
+위 소스에서 `join`은 다른 스레드가 종료할때 까지 기다리게 된다. 참고로 sleep과 마찬가지로 대기 중
+
+interrupt가 들어올 수 있으며, interrupt가 들어올 시, exception이 발동된다(위 소스에선 그런거 고려안함) 
+    
+
 # 4. 주의할점
 
 ### 4.1 독립적인 stack에서 실행됨
 
     stack trace를 사용시 확인 가능. 따라서 한 스레드가 예외가 발생해서 종료되어도 다른 스레드의 실행에는
     영향을 미치지 않는다. run, start 메소드에 따라 호출 스택이 달라짐
+    
+* 소스 내 `checkCallStack`메소드를 스레드 `run`으로 호출 시 call stack
+
+    java.lang.Exception: Exception
+        at thread.items.CheckCallStack.throwException(CheckCallStack.java:12)
+        at thread.items.CheckCallStack.run(CheckCallStack.java:7)
+        at java.lang.Thread.run(Thread.java:745)
+        at thread.ThreadMain.checkCallStack(ThreadMain.java:133)
+        at thread.ThreadMain.main(ThreadMain.java:26)
+    Picked up JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+
+* 소스내 `checkCallStack`메소드를 스레드 `start()`으로 호출 시 call stack
+
+    java.lang.Exception: Exception
+    	at thread.items.CheckCallStack.throwException(CheckCallStack.java:12)
+    	at thread.items.CheckCallStack.run(CheckCallStack.java:7)
+    	at java.lang.Thread.run(Thread.java:745)
+    	
+`run`을 통해 새로운 스레드 환경이 아닌 일반 메소드로 호출 시, callstack 최하단에 `main` 메소드에서 부터 callstack이 쌓이는 것을 확인 할 수가
+
+있다. 하지만 `start`를 써서 새로운 스레드 환경에서 호출 시, 독립적인 stack으로 옮겨 실행 되므로 callstack의 최하단에는 `main`메소드가 아닌
+
+`Thread`에서 부터 시작하는 것을 확인 할 수가 있다.
 
 ### 4.2 한번 실행이 종료된 스레드는 다시 실행 할 수 없다.
+
+### 4.3 sleep은 항상 현재 실행 중인 쓰레드에 대해 작동한다.
+
+`sleep` 메소드는 현재 실행 중인 스레드에 대해서만 반응한다. 따라서 인스턴스에서 호출하는건 의미가 없다(태생이 static method 이다) 

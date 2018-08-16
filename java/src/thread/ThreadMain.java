@@ -129,7 +129,7 @@ public class ThreadMain {
     }
 
     public void checkCallStack(){
-        //new Thread(new CheckCallStack()).start();
-        new Thread(new CheckCallStack()).run();
+        new Thread(new CheckCallStack()).start();
+        //new Thread(new CheckCallStack()).run();
     }
 }
