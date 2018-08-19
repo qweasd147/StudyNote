@@ -33,12 +33,13 @@ $ docker run -i -t --name hello ubuntu /bin/bash
 
     docker compose
     Docker Compose는 컨테이너 여럿을 띄우는 도커 애플리케이션을 정의하고 실행하는 도구(Tool for defining and running multi-container Docker applications)
+    컨테이너를 여러개 띄울 시, 순서대로 컨테이너를 띄울 수 있고, run 할때 옵션들을 미리 정의할수도 있다.
 
 | docker | docker-compose | 설명 |
 | ------------- | ------------- | ------------- |
 | Dockerfile | Dockerfile-dev | 서버 구성을 문서화 <br /> ex) 클래스 선언 |
 | docker build | docker-compose build | 도커 이미지 만들기 <br /> ex) 클래스 선언을 어플리케이션에 로드 |
-| docker run (+@ 옵션들) | docker-compose.yml | 이미지에 붙이는 장식들 <br /> ex) 인스턴스의 변수들 |
+| docker run (+@ 옵션들) | docker-compose.yml | 이미지에 붙이는 장식들. <br /> ex) 인스턴스의 변수들 |
 | docker run | docker-compose up | 장식 붙은 이미지를 실제로 실행 <br /> ex) 인스턴스 생성 |
 
 # 4. 참고
