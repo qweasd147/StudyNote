@@ -13,7 +13,7 @@
 
 Dockerfile에서는 파일 및 디렉토리 추가, 환경변수 지정, 대상 이미지를 사용하여 컨테이너를 시작할 때 어떤 프로세스를 실행 하는지
 
-# 2. docker 실행 옵션
+# 2. docker run(실행) 옵션
 
 | 옵션 | 설명 |
 | ------------- | ------------- |
@@ -29,7 +29,41 @@ Dockerfile에서는 파일 및 디렉토리 추가, 환경변수 지정, 대상 
 
 ex) ubuntu 이미지를 hello 라는 컨테이너로 생성 한 뒤, bash 쉘 실행
 $ docker run -i -t --name hello ubuntu /bin/bash
-# 3. docker와 docker compose 차이점
+
+ex) testnode 이미지의 0.1 tag를 컨테이너의 3000번 포트와 외부 포트 4000번을 연결함
+$ docker run -p 4000:3000 testnode:0.1
+# 3. 그외 docker 명령어
+### 3.1 docker inspect
+
+기본 $ docker inspect [옵션] [컨테이너 명] 으로 실행되며 컨테이너 정보를 보여준다.
+
+```
+$ docker run -d --name test-httpd httpd
+
+$ docker inspect test-httpd
+```
+
+### 3.2 docker exec
+기본 $ docker exec [옵션] [컨테이너명] [명령어] 으로 해당 컨테이너의 명령어를 날린다.
+
+ex) `abc` 컨테이너에 접근(/bin/bash 명령어 사용).
+참고로 옵션은 STDIN 표준 입출력으로(i) 가상 tty (pseudo-TTY,t) 를 통해 접속하겠다는 의미이다.
+
+```
+$ docker exec -it abc /bin/bash
+```
+주의! 참고로 해당 컨테이너에 접속하여 여러 작업을 하는건 추천하지 않는다. 이유는 히스토리 관리가 큰데
+
+docker를 사용하는 이유 중 하나가 여러 컨테이너를 마구마구 찍어내서 생산성을 높이는것을 목표로 하는데 직접 접근하여
+
+파일을 수정하면 각 컨테이너를 만들때 마다 그러한 작업이 요구될 수도 있기 때문이다. 따라서 파일 수정등이 목적이라면
+
+Dockerfile을 사용하여 수정하는것을 추천한다.
+
+
+# 4. docker compose
+
+### 4.1 docker와 docker compose 차이점
 
     docker compose
     Docker Compose는 컨테이너 여럿을 띄우는 도커 애플리케이션을 정의하고 실행하는 도구(Tool for defining and running multi-container Docker applications)
@@ -42,7 +76,7 @@ $ docker run -i -t --name hello ubuntu /bin/bash
 | docker run (+@ 옵션들) | docker-compose.yml | 이미지에 붙이는 장식들. <br /> ex) 인스턴스의 변수들 |
 | docker run | docker-compose up | 장식 붙은 이미지를 실제로 실행 <br /> ex) 인스턴스 생성 |
 
-# 4. 참고
+# 5. 참고
 
 #### 도커 무작정 따라하기(책)
 http://pyrasis.com/docker/2015/02/09/docker-for-dummies
