@@ -6,7 +6,17 @@
 thread라고 불린다. 컴퓨터에서 프로세스(process)와 thread라는 2가지의 실행 단위가 있는데,
 
 차이점은 프로세스는 자신 만의 데이터를 가지지만 스레드들은 동일한 데이터를 공유한다.
-    
+
+### 1.1 스레드 상태, 라이프 사이클
+
+| 상태  | 설명 |
+| ------------- | ------------- |
+| NEW | 스레드가 생성되고 아직 start()가 호출되지 않은 상태 |
+| RUNNABLE | 실행 중 또는 실행 가능한 상태 |
+| BLOCKED | 동기화 블럭에 의해서 일시정지된 생태(lock이 풀릴 때까지 기다리는 상태) |
+| WAITING, <br /> TIMED_WAITING | 스레드의 작업이 종료되지는 않았지만 실행가능하지 않은(unrunnable) 일시정지 상태. <br /> TIMED_WAITING은 일시정지 시간이 지정된 경우를 의미|
+| TERMINATED | 스레드의 작업이 종료된 상태 |
+
 # 2. 장점
 
 # 3. 주요 사용법
@@ -86,10 +96,109 @@ thread라고 불린다. 컴퓨터에서 프로세스(process)와 thread라는 2�
 
 interrupt가 들어올 수 있으며, interrupt가 들어올 시, exception이 발동된다(위 소스에선 그런거 고려안함) 
     
+# 4. 동기화
 
-# 4. 주의할점
+### 4.1 synchronized()
 
-### 4.1 독립적인 stack에서 실행됨
+lock, transaction, thread-safe 등의 관련 설명은 패스!
+
+```java
+public class Buffer {
+    private int data;
+    private boolean empty = true;
+
+    public synchronized int get(){
+        while (empty){
+            try {
+                wait(); //생산될 때 까지 기다린다.
+            } catch (InterruptedException e) {  e.printStackTrace(); }
+        }
+
+        empty = true;
+        notifyAll();
+
+        return data;
+    }
+
+    public synchronized void put(int data){
+        while (!empty){
+            try {
+                wait(); //소비 될 때까지 기다린다.
+            } catch (InterruptedException e) { e.printStackTrace(); }
+        }
+
+        empty = false;
+        this.data = data;
+
+        notifyAll();
+    }
+}
+```
+
+여러 스레드 안에서도 안전하게 데이터를 핸들링하기 위해서 `synchronized`를 사용한다. 
+
+즉, thread-safe를 위하여 공통된 임계구역을 지정하고 특정 메소드 또는 블럭을 지정하여 `synchronized`사용하면 항상 일관된
+
+데이터를 얻을 수가 있다.
+
+참고로 특정 블럭에 `synchronized`적용 시
+
+```java
+synchronized(this){
+    //TODO : handle critical data
+}
+```
+
+위 소스에서 this는 critical한 data를 지정하고(보통 this이지만 아닐수도 있음) 내부 블록에서 lock을 얻어 사용해야할
+
+처리를 정의해주기만 하면 된다. 또한 메소드 통째로가 아닌 블록으로 지정하여 동기화 하였을 시, 특정 블록만 lock을 걸어서
+
+아무래도 메소드 전체보다는 빠를수 밖에 없다.
+
+### 4.2 wait(), notify()
+
+* Object에 정의되어 있다(따로 import x)
+* 동기화 블록(synchronized)내에서만 사용할 수 있다.
+* wait는 lock을 반납하고 대기
+* notify를 호출하면 작업을 중단했던 스레드가 다시 락을 얻어 작업을 진행
+
+위 `4.1` 소스에서 `synchronized`안에 `wait()`, `notifyAll()`를 사용하고 있다. 
+
+`get`, `put` 메소드 내부에서는 임계구역(`synchronized`)이므로 lock을 얻은 뒤, 다른 작업 처리를 기다리기
+
+위해 현재 스레드의 lock을 반납하고 대기(`wait()`) 하고 있다가, `notify` 또는 `notifyAll`에 의해 다시 처리가
+
+계속 진행되게 된다. 
+
+### 4.3 volatile
+
+스레드 환경에서 각 프로세서에서 특정 필드 데이터를 캐싱하여 사용하면 캐시와 메모리 간 데이터가 불일치 하고, 따라서
+
+여러 프로세서에서 값이 불일치 하는 경우가 발생할 수도 있다. 이러한 케이스를 방지하기 위해 `volatile` 키워드를 사용하여
+
+변수 선언 시, '이 변수에 값은 캐시가 아닌 항상 메모리에서 읽어들이겠다' 라는 뜻이 된다. 따라서 항상 프로세서 별로 동일한
+
+값이 보장되게 된다. `synchronized`를 사용해도 값이 보장되지 않는다면 위 내용을 의심해봐야 한다.
+
+```java
+public ThreadTest {
+    public volatile int inMemoryData = 0;
+
+    ...
+}
+```
+
+위의 `inMemoryData` 값은 항상 캐시에 저장되지 않고 오로지 메모리에서만 저장되므로, 여러 스레드에서 프로세서 별로
+
+캐싱된 데이터로 사용하지 않고 항상 메모리에서 읽어들이게 된다.
+
+### 4.4 lock, condition을 이용한 동기화
+
+### 4.5 fork, join 프레임워크
+
+# 5. 주의할점
+
+### 5.1 독립적인 stack에서 실행됨
 
     stack trace를 사용시 확인 가능. 따라서 한 스레드가 예외가 발생해서 종료되어도 다른 스레드의 실행에는
     영향을 미치지 않는다. run, start 메소드에 따라 호출 스택이 달라짐
@@ -117,8 +226,8 @@ interrupt가 들어올 수 있으며, interrupt가 들어올 시, exception이 �
 
 `Thread`에서 부터 시작하는 것을 확인 할 수가 있다.
 
-### 4.2 한번 실행이 종료된 스레드는 다시 실행 할 수 없다.
+### 5.2 한번 실행이 종료된 스레드는 다시 실행 할 수 없다.
 
-### 4.3 sleep은 항상 현재 실행 중인 쓰레드에 대해 작동한다.
+### 5.3 sleep은 항상 현재 실행 중인 쓰레드에 대해 작동한다.
 
 `sleep` 메소드는 현재 실행 중인 스레드에 대해서만 반응한다. 따라서 인스턴스에서 호출하는건 의미가 없다(태생이 static method 이다) 
