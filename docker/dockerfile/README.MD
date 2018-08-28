@@ -54,7 +54,7 @@ ENV NODE_ENV dev #NODE_ENV라는 환경변수에 dev값을 넣는다.
 가상 머신에 오픈할 포트 지정
 
 ### 2.7 CMD
-마지막으로 실행될 명령어를 지정
+마지막으로 실행될 명령어를 지정. 빌드할 때는 실행되지 않고, 컨테이너가 올라갈때 실행된다.
 
 # 3. .dockerignore
 Dockerfile과 같은 디렉토리에 들어있는 모든 파일을 context라고 하고, 이미지를 생성할 때 context를
@@ -62,3 +62,15 @@ Dockerfile과 같은 디렉토리에 들어있는 모든 파일을 context라고
 모두 Docker 데몬에 전송한다. 이때 특정 파일을 제거하고 싶으면 .dockerignore파일을 작성하여 같이 두면
 
 ignore가 된다.
+
+# 4. 소스 업데이트
+
+컨테이너를 껏다가 다시 켜야 하는거 같다...
+
+```sh
+$docker stop 컨테이너
+$docker start 컨테이너
+
+#또는 restart
+$docker restart 컨테이너
+```

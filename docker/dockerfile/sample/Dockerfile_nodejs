@@ -1,0 +1,18 @@
+#기본 nodejs 컴파일 파일 .. 사실상 별거 없고
+#소스 파일은 컨테이너 생성 시 /app 하위에 마운트(볼륨)하여 사용 목적
+
+FROM node
+
+#create, set workdir
+RUN mkdir -p /app
+WORKDIR /app
+
+#install dependencies
+#COPY package*.json ./
+#RUN npm install
+
+#copy app source
+#COPY . .
+
+EXPOSE 4000
+CMD [ "npm", "start" ]

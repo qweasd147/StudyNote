@@ -31,13 +31,30 @@ ex) ubuntu 이미지를 hello 라는 컨테이너로 생성 한 뒤, bash 쉘 �
 $ docker run -i -t --name hello ubuntu /bin/bash
 
 ex) testnode 이미지의 0.1 tag를 컨테이너의 3000번 포트와 외부 포트 4000번을 연결함
+```sh
 $ docker run -p 4000:3000 testnode:0.1
+```
+
+ex) httpd 컨테이너를 생성하여 컨테이너의 /usr/local/apache2/htdocs경로와 `소스 경로`를 연결하고
+
+컨테이너 80포트를 외부포트 3000번과 연결
+```sh
+$ docker run -d -p 3000:80 --name=board-front -v 소스경로:/usr/local/apache2/htdocs httpd
+```
+
+ex base-node:0.1 컨테이너를 생성하여 컨테이너의 /app 경로를  `소스 경로`를 연결하고
+
+컨테이너 4000번 포트를 외부 포트 4000번과 연결
+```sh
+$ run -d -p 4000:4000 --name=board-api -v 소스경로:/app base-node:0.1
+```
+
 # 3. 그외 docker 명령어
 ### 3.1 docker inspect
 
 기본 $ docker inspect [옵션] [컨테이너 명] 으로 실행되며 컨테이너 정보를 보여준다.
 
-```
+```sh
 $ docker run -d --name test-httpd httpd
 
 $ docker inspect test-httpd
