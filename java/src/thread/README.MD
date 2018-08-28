@@ -153,7 +153,7 @@ synchronized(this){
 
 처리를 정의해주기만 하면 된다. 또한 메소드 통째로가 아닌 블록으로 지정하여 동기화 하였을 시, 특정 블록만 lock을 걸어서
 
-아무래도 메소드 전체보다는 빠를수 밖에 없다.
+아무래도 메소드 전체보다는 빠를수 밖에 없다. 참고로 `synchronized` 안에서 예외가 발생하여도 lock은 자동적으로 풀린다.
 
 ### 4.2 wait(), notify()
 
@@ -169,6 +169,11 @@ synchronized(this){
 위해 현재 스레드의 lock을 반납하고 대기(`wait()`) 하고 있다가, `notify` 또는 `notifyAll`에 의해 다시 처리가
 
 계속 진행되게 된다. 
+
+    notify()와 notifyAll()의 차이점은 notify()는 waiting pool에서 대기 중인 스레드 중 하나를 임의로 선택하여
+    그 스레드한테만 알려주지만, notifyAll()은 모든 waiting pool에 대기중은 스레드에게 알려준다. 따라서 notify()는
+    경우에따라서 원하는 스레드에게 알림이 안갈 수도 있고, notifyAll()은 모든 스레드에게 알림이 가지만 프로세서를 할당
+    받지 못한 스레드는 다시 waiting pool로 들어가게 된다.
 
 ### 4.3 volatile
 
