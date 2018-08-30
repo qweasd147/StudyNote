@@ -199,7 +199,82 @@ public ThreadTest {
 
 ### 4.4 lock, condition을 이용한 동기화
 
+#### 4.4.1 lock
+
+#### 4.4.2 condition
+
+`wait()`와 `notify()`, `notifyAll()`은 특정 스레드를 대기, 알림 통지하지 못한다는 한계점이 있다.
+
+이에 `Condition`은 스레드를 그룹화 하고 그 그룹에게만 알림을 보낼 수가 있다.
+
+| Object  | Condotion |
+| ------------- | ------------- |
+| void wait() | void await() <br /> void awaitUninterruptibly() |
+| void await(long timeout) | boolean await(long time, TimeUnit unit) <br /> long awaitNanos(long nanosTimeout) <br /> boolean awaitUntil(Date deadline) |
+| void notify() | void signal() |
+| void notifyAll() | void signalAll() |
+
+#### 필드, 메소드를 제외한 클래스 다이어그램
+
+![ClassDiagram](./Condition2.png)
+#### 클래스 다이어그램
+
+![ClassDiagram](./Condition1.png)
+연관 클래스를 모두 클래스 다이어그램에 담지는 않았지만, 중요하다고 생각되는것만 담았다.
+
+```java
+    @Override
+    public int get() {
+        lock.lock();
+        try{
+            while(empty){
+                putCond.await();
+            }
+            empty = true;
+            getCond.signal();
+
+        } catch (InterruptedException e) {  System.out.println("인터럽트 감지. "+e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+
+        return data;
+    }
+
+    @Override
+    public void put(int data) {
+        lock.lock();
+        try{
+            while(!empty){
+                getCond.await();
+            }
+            empty = false;
+            this.data = data;
+
+            putCond.signal();
+
+        } catch (InterruptedException e) {  System.out.println("인터럽트 감지. "+e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+    }
+```
+
+핵심은 `Condition`의 인스턴스인 `getCond`객체와 `putCond`객체이다. 각 인스턴스는 특정 객체를 대기, 알림을 받을 수가 있어서
+
+소스에선 `put`과 `get`메소드는 크로스 형태로 대기, 알림을 직접적으로 알려줄 수가 있다. 물론 이런 형태는 인터럽트를 발생 시,
+
+오히려 무한루프에 빠질수 있는 취약한 구조이므로 실무에서 써먹을려면 잘 생각해야한다.(물론 `condition`의 단점이라기보단 스레드가 그렇다)
+
+
+
 ### 4.5 fork, join 프레임워크
+
+fork, join 프레임워크는 하나의 작업을 작은 작업으로 분할하여 큐에 담은 다음, 각 스레드에서 큐에 담긴 작업을 하나씩 잡고
+
+처리하도록 설계되어 있다. 따라서 특정 스레드가 따로 노는 일이 없으므로 빠른 처리가 가능하다. 물론 선행, 후행 작업이 있으므로
+
+오버헤드가 나는 케이스도 발생할 수 있다. 아무튼 그래서 작업을 나누는(fork) 처리와 다시 합치는(join) 부분(compute)을 구현해야한다.
 
 # 5. 주의할점
 
@@ -235,4 +310,10 @@ public ThreadTest {
 
 ### 5.3 sleep은 항상 현재 실행 중인 쓰레드에 대해 작동한다.
 
-`sleep` 메소드는 현재 실행 중인 스레드에 대해서만 반응한다. 따라서 인스턴스에서 호출하는건 의미가 없다(태생이 static method 이다) 
+`sleep` 메소드는 현재 실행 중인 스레드에 대해서만 반응한다. 따라서 인스턴스에서 호출하는건 의미가 없다(태생이 static method 이다)
+
+### 6. 참고자료
+
+* 스레드, 스레드 풀 관련 설명 : http://hamait.tistory.com/612
+
+* 병렬처리 관련 설명. ForkJoin프레임워크 포함 : https://www.popit.kr/java8-stream%EC%9D%98-parallel-%EC%B2%98%EB%A6%AC/

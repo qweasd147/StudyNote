@@ -16,10 +16,10 @@ public class Producer implements Runnable{
         .forEach(cnt -> {
             buffer.put(cnt);
 
-            System.out.println("생산자 : "+cnt+"번 데이터 생산");
+            //System.out.println("생산자 : "+cnt+"번 데이터 생산");
 
             try {
-                Thread.sleep((int)(Math.random()*100));
+                Thread.sleep((int)(Math.random()*10));
             } catch (InterruptedException e) { e.printStackTrace(); }
         });
     }

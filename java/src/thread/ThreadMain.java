@@ -8,9 +8,7 @@ import thread.items.counter.Counter;
 import thread.items.counter.CounterThread;
 import thread.items.counter.SafeCounter;
 import thread.items.counter.UnsafeCounter;
-import thread.items.product.Buffer;
-import thread.items.product.Consumer;
-import thread.items.product.Producer;
+import thread.items.product.*;
 
 public class ThreadMain {
 
@@ -22,8 +20,9 @@ public class ThreadMain {
 
         //threadMain.nonThreadSafe();
         //threadMain.threadSafeWithSync();
-        //threadMain.productConsumer();       //생산자 & 소비자
-        threadMain.checkCallStack();
+        //threadMain.productConsumerWithSync();         //생산자 & 소비자
+        threadMain.productConsumerWithLocks();        //생산자 & 소비자
+        //threadMain.checkCallStack();
 
     }
 
@@ -121,8 +120,15 @@ public class ThreadMain {
         safeThread4.start();
     }
 
-    public void productConsumer(){
-        Buffer buffer = new Buffer();
+    public void productConsumerWithSync(){
+        Buffer buffer = new BufferWithSync();
+
+        (new Thread(new Producer(buffer))).start();
+        (new Thread(new Consumer(buffer))).start();
+    }
+
+    public void productConsumerWithLocks(){
+        Buffer buffer = new BufferWithLocks();
 
         (new Thread(new Producer(buffer))).start();
         (new Thread(new Consumer(buffer))).start();

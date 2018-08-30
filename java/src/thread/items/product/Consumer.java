@@ -16,10 +16,10 @@ public class Consumer implements Runnable{
         .forEach(cnt -> {
             int data = buffer.get();
 
-            System.out.println("소비자 : "+data+"번 데이터 소비");
+            //System.out.println("소비자 : "+data+"번 데이터 소비");
 
             try {
-                Thread.sleep((int)(Math.random()*10000));
+                Thread.sleep((int)(Math.random()*1000));
             } catch (InterruptedException e) { e.printStackTrace(); }
         });
     }
