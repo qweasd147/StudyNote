@@ -31,7 +31,9 @@ public class StreamMain {
 
         //mainInstance.collectorImpl();          //collector 구현
 
-        mainInstance.useFnInStream();
+        //mainInstance.useFnInStream();
+
+        mainInstance.safeValWithOptional();
     }
 
     public void baseStream(){
@@ -298,5 +300,30 @@ public class StreamMain {
             .stream()
             .map(item -> "update" + item)
             .collect(Collectors.toSet());
+    }
+
+    private void handleOptional(){
+        Optional<Integer> wrapIntVal = Optional.of(new Integer(5));
+        Integer intVal = wrapIntVal.get();      //intVal == 5
+    }
+
+    private void safeValWithOptional(){
+
+        Map<String, Integer> mockupMap = new HashMap<>();
+
+        final String findKey = "data10"; //찾으려는 키값
+
+        //mock data
+        mockupMap.put("data1", 1);
+        mockupMap.put("data2", 2);
+        mockupMap.put("data3", 3);
+
+        Integer findVal = mockupMap.entrySet().stream()
+                .filter(entry -> findKey.equals(entry.getKey()))
+                .map(entry -> entry.getValue())
+                .findAny()              //Optional 객체가 반환된다.
+                .orElse(-1);
+
+        System.out.println("검색된 값 : "+findVal.toString());
     }
 }

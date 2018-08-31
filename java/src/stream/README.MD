@@ -244,9 +244,73 @@ public void streamReduce(){
 
 같이 기억하면 될것이다.
 
+# 3. Optional<T> OptionalInt
 
-# 3. 주의점
-### 3.1 데이터 원본을 변경하지 않음
+java 1.8에 추가된 Optional은 제너릭 타입을 한번 wrap한 레퍼 클래스라고 생각하면 된다. 장점으로는 데이터를
+
+핸들링하다 null값 처리를 유연하게 해주는 유틸성 클래스 정도라고 생각하면 된다.
+
+  참고로 Stream과는 큰 연관성은 없지만 Stream 사용시 유용하게 사용하므로 Optional을 껴놓았다.
+
+```java
+public final class Optional<T> {
+    
+    ...
+
+    private final T value;
+
+    private Optional(T value) {
+        this.value = Objects.requireNonNull(value);
+    }
+
+    public static <T> Optional<T> of(T value) {
+        return new Optional<>(value);
+    }
+    ...
+}
+```
+위 소스는 `Optional` Class의 일부분으로 정말 제너릭 타입(T)을 랩핑한 클래스이다.
+
+
+```java
+  private void handleOptional1(){
+        Optional<Integer> wrapIntVal = Optional.of(new Integer(5));
+        Integer intVal = wrapIntVal.get();      //intVal == 5
+    }
+```
+보는 바와 같이 사용법은 간단하고 `Optional` 클래스를 살펴보면 다른 유틸성 메소드가 많긴 많이 있다...
+
+아무튼 스트림과 연계하여 사용하면 편리한점이 많이 있다.
+
+```java
+  private void safeValWithOptional(){
+
+      Map<String, Integer> mockupMap = new HashMap<>();
+
+      final String findKey = "data10"; //찾으려는 키값
+
+      //mock data
+      mockupMap.put("data1", 1);
+      mockupMap.put("data2", 2);
+      mockupMap.put("data3", 3);
+
+      Integer findVal = mockupMap.entrySet().stream()
+              .filter(entry -> findKey.equals(entry.getKey()))
+              .map(entry -> entry.getValue())
+              .findAny()              //Optional 객체가 반환된다.
+              .orElse(-1);
+
+      System.out.println("검색된 값 : "+findVal.toString());
+  }
+```
+데이터 스트림 값중 아무 값이나 한가지를 반환(`findAny`)하고, 만약 조건에 맞는 값이 없을 시, -1을
+
+반환하도록 짜여져 있다.
+
+  OptionalInt 같은 얘들은 IntStream 처럼 불필요한 형변환으로 인한 성능저하를 막기 위하여 사용된다.
+
+# 4. 주의점
+### 4.1 데이터 원본을 변경하지 않음
 
 ```java
 public void streamOperator(){
@@ -271,7 +335,7 @@ public void streamOperator(){
 
 그대로 변함없이 출력 되는 것을 확인 할 수 있다.
 
-### 3.2 일회용
+### 4.2 일회용
 
 ```java
 public void baseStream(){
@@ -308,13 +372,13 @@ public void baseStream(){
 재사용하는게 아니라 각각 새로운 스트림을 얻는점은 변함이 없다.
 
 
-### 3.3 내부 작업을 반복으로 처리
+### 4.3 내부 작업을 반복으로 처리
 
 주의점이라기 보단 3.2에 있는 소스를 보면 forEach문을 사용하여 스트림에 반복된 작업 수행이 가능하다.
 
 이는 for문을 사용하여 직접 데이터를 가져와서 작업하는 방법이 아니라, 더 간결하고 빠르게 작업이 가능하다.
 
-### 3.4 병렬처리 thread safe
+### 4.4 병렬처리 thread safe
 아무리 병렬 처리가 쉽다고 해도, 결국엔 병렬 처리이다. 순서가 보장 되지 않으므로 이에 따른 문제가 발생 할 수도 있다.
 
 당장 2.2에 있는 소스만 봐도 순서가 보장 되지 않는 것을 확인 할 수가 있다.
@@ -327,7 +391,7 @@ public void baseStream(){
 
 https://beginnersbook.com/2013/12/how-to-synchronize-arraylist-in-java-with-example/
 
-### 3.5 병렬처리 시 sort
+### 4.5 병렬처리 시 sort
 
 ```java
 public void streamSort(){
@@ -346,7 +410,7 @@ public void streamSort(){
 
 병렬처리로서의 이점(속도)은 줄어든다고 한다.
 
-### 3.6 callback hell
+### 4.6 callback hell
 
 스트림안에 스트림을 처리해야 하는 경우, 이럴때 생각나는건 javascript의 callback hell이 생각이 난다.
 
@@ -374,9 +438,11 @@ public void streamSort(){
 }
 ```
 
-위 소스에서 2번째 `map`에서 다시한번 스트림을 불러와 처리를 하고 있다. 이런식으로 내부적으로 연속해서 stream을 처리하다 보면
+위 소스에서 2번째 `map`에서 다시한번 스트림을 불러와 처리를 하고 있다. 이런식으로 내부적으로 연속해서 stream을
 
-가독성이 그리 좋을꺼 같지 않다고 생각하고 있다. 그래서 2번째 `map`에 인자값으로 함수를 반환하는 메소드로 대체하여 사용하였다.
+처리하다 보면 가독성이 그리 좋을꺼 같지 않다고 생각하고 있다. 그래서 2번째 `map`에 인자값으로 함수를 반환하는
+
+메소드로 대체하여 사용하였다.
 
 ```java
 public void streamSort(){
@@ -401,4 +467,6 @@ private Supplier<Set<String>> handleItemList(List<String> itemList){
 }
 ```
 
-이런식으로 하면 그나마 가독성이 좋아졌다고 생각하고 있다. 마치 javascript에서 thunk, currying이 생각나게 하고 있다.
+이런식으로 하면 그나마 가독성이 좋아졌다고 생각하고 있다. 
+
+함수형 언어나 javascript에서 많이 들어본 thunk, currying이 생각나게 하고 있다.

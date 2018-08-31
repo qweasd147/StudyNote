@@ -30,7 +30,7 @@ thread라고 불린다. 컴퓨터에서 프로세스(process)와 thread라는 2�
 | Thread(Runnable target, String name) | Runnable을 구현하는 객체로 부터 스레드를 생성 |
 | static int activeCount() | 현재 활동 중인 스레드의 개수를 반환 |
 | String getName() | 스레드의 이름을 반환 |
-| int getPriority() | 스레드의 수선순위를 반환 |
+| int getPriority() | 스레드의 우선순위를 반환 |
 | void interrupt() | 현재의 스레드를 중단 |
 | boolean isInterrupted() | 현재의 스레드가 중단될 수 있는지를 검사 |
 | void setPriority(int priority) | 스레드의 우선순위를 지정 |
@@ -137,9 +137,9 @@ public class Buffer {
 
 여러 스레드 안에서도 안전하게 데이터를 핸들링하기 위해서 `synchronized`를 사용한다. 
 
-즉, thread-safe를 위하여 공통된 임계구역을 지정하고 특정 메소드 또는 블럭을 지정하여 `synchronized`사용하면 항상 일관된
+즉, thread-safe를 위하여 공통된 임계구역을 지정하고 특정 메소드 또는 블럭을 지정하여 `synchronized`사용하면 항상
 
-데이터를 얻을 수가 있다.
+일관된 데이터를 얻을 수가 있다.
 
 참고로 특정 블럭에 `synchronized`적용 시
 
@@ -310,7 +310,9 @@ fork, join 프레임워크는 하나의 작업을 작은 작업으로 분할하�
 
 ### 5.3 sleep은 항상 현재 실행 중인 쓰레드에 대해 작동한다.
 
-`sleep` 메소드는 현재 실행 중인 스레드에 대해서만 반응한다. 따라서 인스턴스에서 호출하는건 의미가 없다(태생이 static method 이다)
+`sleep` 메소드는 현재 실행 중인 스레드에 대해서만 반응한다.
+
+따라서 인스턴스에서 호출하는건 의미가 없다 (태생이 static method 이다)
 
 ### 6. 참고자료
 
