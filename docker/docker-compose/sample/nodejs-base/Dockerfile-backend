@@ -1,0 +1,14 @@
+FROM node
+
+#create, set workdir
+RUN mkdir -p /app
+WORKDIR /app
+
+#install dependencies
+#COPY package*.json ./
+#RUN npm install
+
+#copy app source
+#COPY . .
+
+CMD [ "npm", "start" ]
