@@ -93,7 +93,35 @@ Dockerfile을 사용하여 수정하는것을 추천한다.
 | docker run (+@ 옵션들) | docker-compose.yml | 이미지에 붙이는 장식들. <br /> ex) 인스턴스의 변수들 |
 | docker run | docker-compose up | 장식 붙은 이미지를 실제로 실행 <br /> ex) 인스턴스 생성 |
 
-# 5. 참고
+# 5. 발생했던 문제점들
+
+### 5.1 docker chain이 제대로 설정x
+
+    ~(생략) -i docker0: iptables: No chain/target/match by that name. (exit status 1)).
+
+docker 컨테이너를 올릴 때 iptables에 docker chain이 없을 때 발생. 맨 처음 docker를 실행 할 때 발생하였는데 정확한
+
+원인은 모르겠음...
+
+#### 해결책
+
+수동으로 docker chain을 iptables에 등록한다.
+
+```sh
+$ iptables -t filter -N DOCKER
+$ iptables -t nat -N DOCKER
+```
+
+or
+
+docker 서비스를 재시작 한다.
+
+```sh
+$ service docker stop
+$ service docker start
+```
+
+# 6. 참고
 
 #### 도커 무작정 따라하기(책)
 http://pyrasis.com/docker/2015/02/09/docker-for-dummies
