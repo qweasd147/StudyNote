@@ -119,6 +119,24 @@ private static boolean isEquals3(
 
 매개변수 타입을 매개변수를 나열할 때 쓰느냐(밑에 소스) 차이점이 된다.
 
+### 3.5 중첩된 제한 가능
+
+```java
+public static <T extends Enum & DummyForEnum> void multipleGenerics(T enumClass){
+    enumClass.testMethod();
+}
+```
+
+```java
+public static void main(String[] args) {
+    multipleGenerics(EnumExtend.DUMMY_ENUM);  //제너릭 제한
+}
+```
+
+위 소스에서 보는 바와 같이 제너릭 타입 제한을 `&` 통해 중첩된 제한이 가능하다. 위 소스는 제너릭 타입 `T`의
+
+제한을 `Enum`, interface `DummyForEnum`를 확장한 형태만 받을 수 있게 제한하고 있다.
+
 # 4. 주의할점
 
 #### 4.1 extends, super 사용 시 주의 점

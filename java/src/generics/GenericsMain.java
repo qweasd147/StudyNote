@@ -14,7 +14,10 @@ public class GenericsMain {
 
         //mainInstance.wildCard();       //와일드 카드 사용법
 
+        //multipleGenerics(EnumExtend.DUMMY_ENUM);  //제너릭 제한
+
         mainInstance.genericsMethod();   //제너릭 메소드
+
     }
 
     /**
@@ -88,6 +91,11 @@ public class GenericsMain {
 
     }
 
+    public static <T extends Enum & DummyForEnum> void multipleGenerics(T enumClass){
+
+        enumClass.testMethod();
+    }
+
     private static <T extends SubSomeThingClass> boolean isEquals1(T s1, T s2){
 
         int s1Code = s1.hashCode();
@@ -113,4 +121,5 @@ public class GenericsMain {
 
         return s1Code == s2Code;
     }
+
 }
