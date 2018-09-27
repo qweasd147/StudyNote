@@ -21,7 +21,7 @@ yml 문법에 따라 작성되며, 여러 컨테이너를 한번에 실행(`run`
 | links | 컨테이너 간의 통신을 위해 말 그대로 link 시킨다. |
 | command | Dockerfile의 CMD와 똑같다. <br />(컨테이너가 올라간 후 명령 실행) |
 | volumes | 컨테이너를 올릴때(`run`) -v옵션과 똑같다. |
-| healthcheck | 컨테이너가 다 올라갔는지 체크하는거. 1.5에서 `depends_on`과 연계된다. |
+| healthcheck | 컨테이너가 다 올라갔는지 체크하는거. 2.2에서 `depends_on`과 연계된다. |
 
 # 2. 옵션 상세 설명
 
@@ -32,7 +32,16 @@ yml 문법에 따라 작성되며, 여러 컨테이너를 한번에 실행(`run`
 * https://docs.docker.com/compose/compose-file/compose-versioning/
 
 ### 2.2 depends_on
-의존 관계 설정. A->B->C 순으로 컨테이너가 올라가야 한다면 설정한다.
+
+    주의 할 점은 이 옵션은 단지 구동 순서를 제어할 뿐이지 의존관계에 있는 어플이 완전히 '준비' 상태인지 판단하지는 않는다.
+    확실한 '준비' 상태일 시 구동할려면 아래 옵션인 condition, healthcheck 옵션을 사용해야 하지만 이는 버전 2.x대 에서만
+    사용이 가능하고 3.x 부턴 다시 없어졌다. 권장사항은 그냥 연결을 계속 재시도 하거나 다른 라이브러리를 사용하라고 한다.
+    이유야 있을꺼 같지만 솔직히 이해는 안간다.
+    
+* 관련 이슈 내용 : https://github.com/peter-evans/docker-compose-healthcheck/issues/3
+
+
+의존 관계 설정. A->B->C 순으로 컨테이너가 실행되야 한다면 설정한다.
 
 ex) 현재 이미지가 app01이 먼저 실행 된 다음 돌아간다.
     depends_on
