@@ -470,3 +470,23 @@ private Supplier<Set<String>> handleItemList(List<String> itemList){
 이런식으로 하면 그나마 가독성이 좋아졌다고 생각하고 있다. 
 
 함수형 언어나 javascript에서 많이 들어본 thunk, currying이 생각나게 하고 있다.
+
+### 4.6 auto close
+
+아무래도 Stream을 사용하다보면 자원을 사용 후, 닫는것에 대해 예민하게 생각할 것이다.
+
+일반적으로 사용하는 `Stream`은 대부분 `AutoCloseable`를 구현하여 알아서 자원을 닫아준다.
+
+하지만 `Files.lines()` 등의 io channel을 사용하는 메소드는 주의해야 한다. 그냥 `try-with-resource` 구문을 사용
+
+시 편하게 할 수가 있다.(소스는 흔하니까 생략!)
+
+참고로 `Stream`의 하위`flatMap`, `concat`등의 메소드도 알아서 잘 닫아준다(새로운 스트림을 만들고, 이전 스트림은 close).
+
+* https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#flatMap-java.util.function.Function-
+
+flatMap
+  Each mapped stream is closed after its contents have been placed into this stream.
+
+concat
+  When the resulting stream is closed, the close handlers for both input streams are invoked.
