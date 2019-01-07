@@ -486,7 +486,9 @@ private Supplier<Set<String>> handleItemList(List<String> itemList){
 * https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#flatMap-java.util.function.Function-
 
 flatMap
-  Each mapped stream is closed after its contents have been placed into this stream.
+
+    Each mapped stream is closed after its contents have been placed into this stream.
 
 concat
-  When the resulting stream is closed, the close handlers for both input streams are invoked.
+
+    When the resulting stream is closed, the close handlers for both input streams are invoked.
