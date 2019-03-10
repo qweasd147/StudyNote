@@ -5,7 +5,7 @@
 
 ### 1.2 손쉬운 병렬처리
 
-### 1.3 최종 연산이 실행될때 중간연산들을 실행한다.
+### 1.3 최종 연산이 실행될때 중간연산들을 실행한다. (지연 실행)
   이 부분이 좋은 점이 불필요한 연산을 줄여준다는 점이다. 밑에 2.1에서 좀 더 자세히 설명
     
 # 2. Stream 기본 사용법
@@ -141,11 +141,11 @@ public void streamCollect(){
 ```
 collection framework로 변환 시, Stream.collect를 사용하고, 인자값(함수 같은 메소드)으로 toMap을 넘겨주면 된다.
 
-여기서 주의점으로 map은 (key, value)로 존재하므로 key값을 구하기 위한 Function interface,
+여기서 주의점으로 map은 (key, value)로 존재하므로 key값을 구하기 위한 Function interface, value값을 구하기 위한
 
-value값을 구하기 위한 Function interface를 구현해서 넘겨줘야 한다. 소스를 보면 key 값으로 user name, 값으로 vo객체 그대로
+Function interface를 구현해서 넘겨줘야 한다. 소스를 보면 key 값으로 user name, 값으로 vo객체 그대로 넘겨주는 것을
 
-넘겨주는 것을 확인 할 수 있다.
+확인 할 수 있다.
 
 ```java
 public void streamCollect(){
@@ -195,7 +195,6 @@ public void flatStream(){
     .forEach(System.out::println);
 }
 ```
-메소드 참조에 대해 부정적인 인식을 가지고 있지만, 일단 잘 써먹고 있다....
 
 flatMap을 사용하여 스트림 내 배열(또는 객체)로 구성된 된 아이템을 단일 원소로 구성 할 수가 있다.
 
@@ -492,3 +491,11 @@ flatMap
 concat
 
     When the resulting stream is closed, the close handlers for both input streams are invoked.
+
+### 4.7 병렬 처리 시, 내부적으로 Fork Join Framework를 사용한다.
+
+주의사항이라기 보단 참고사항인데, 병렬처리 시 기본적으로 내부에서 Fork Join Framework를 사용해서 처리한다.
+
+스레드 개수 또한 알아서 정해져 있고(기본 코어 개수) 변경은 가능하지만 추천하지는 않는다. 아무튼 이러한 방법으로
+
+내가(개발자가) 아닌 시스템이 알아서 처리하는 고수준 코딩이 가능하다.
