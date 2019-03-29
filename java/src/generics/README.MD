@@ -193,8 +193,20 @@ Exception(정확히 Throwable)을 확장한 클래스에서는 사용이 불가�
         try {
            throw new BusinessException<String>();
         } catch (BusinessException<Integer> e) {
-           // ???
+           //handle exception ...
         } catch (BusinessException<String> e) {
+           //handle exception ...
+        }
+    }
+```
+위와 같은 소스가 아래와 같이 변한다.
+```java
+    public static void main(String[] args) {
+        try {
+           throw new BusinessException<String>();
+        } catch (BusinessException e) {
+           // ???
+        } catch (BusinessException e) {
            // ???
         }
     }
