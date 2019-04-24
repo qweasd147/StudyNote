@@ -123,6 +123,12 @@ $ service docker start
 
 # 6. 참고
 
+#### Docker file을 써서 Linux위에 Centos나 Ubuntu 설치 시 Guest OS가 설치 되는건지
+> X. Host OS(Linux)와 `CentoOS`, `Ubuntu` 등의 다른 부분(diff)만 따로 패키징하여 결과정으로 훨씬 가볍다.
+
+* https://developer.ibm.com/kr/cloud/2019/02/01/easy_container_kubernetes/
+
+
 #### 도커 무작정 따라하기(책)
 http://pyrasis.com/docker/2015/02/09/docker-for-dummies
 
