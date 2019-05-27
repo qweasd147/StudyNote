@@ -112,4 +112,4 @@ it2.return();
 console.log(it2.next().done);      //true
 ```
 
-이런식으로 외부에서 `generator` 함수 종료(`return`)이 가능하다. 또한 이후 이터레이터는 종료(`done`)상태가 된다
+이런식으로 외부에서 `generator` 함수 `return`이 가능하다. 또한 이후 이터레이터는 종료(`done`)상태가 된다
