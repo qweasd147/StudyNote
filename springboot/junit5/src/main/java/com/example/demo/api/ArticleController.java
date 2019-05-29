@@ -6,9 +6,15 @@ import com.example.demo.service.ArticleService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/article")
@@ -19,10 +25,16 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public ResponseEntity searchAll(Pageable pageable){
-        Page<Article> articlePages = articleService.searchAll(pageable);
+    public ResponseEntity searchAll(@PageableDefault(sort = "idx", direction = Sort.Direction.DESC ,size = 10)Pageable pageable){
 
-        return ResponseEntity.ok(articlePages);
+        Page<Article> articlePages = articleService.searchAll(pageable);
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("contents", articlePages.getContent());
+        result.put("count", articlePages.getTotalElements());
+        result.put("page", articlePages.getNumber() + 1);
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{articleIdx}")
@@ -36,16 +48,22 @@ public class ArticleController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void register(ArticleDto.CreateReq createReq){
+    public ArticleDto.Resp register(@Valid ArticleDto.CreateReq createReq){
 
-        articleService.register(createReq);
+        Article article = articleService.register(createReq);
+
+        //잘 등록 되었나 확인차 반환
+        return ArticleDto.Resp.of(article);
     }
 
     @PutMapping("/{articleIdx}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void modify(@PathVariable Long articleIdx, ArticleDto.ModifyReq modifyReq){
+    public ArticleDto.Resp modify(@PathVariable Long articleIdx, @Valid ArticleDto.ModifyReq modifyReq){
 
-        articleService.modify(articleIdx, modifyReq);
+        Article article = articleService.modify(articleIdx, modifyReq);
+
+        //잘 수정 되었나 확인차 반환
+        return ArticleDto.Resp.of(article);
     }
 
     @DeleteMapping("/{articleIdx}")

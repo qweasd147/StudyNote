@@ -3,12 +3,14 @@ package com.example.demo.model;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
@@ -28,22 +30,28 @@ public class Article {
     @Lob
     private String contents;
 
-    @Transient
-    private Set<String> tags = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "article_id")
+    @OrderBy("idx ASC ")
+    @BatchSize(size = 20)
+    private Set<Tag> tags = new LinkedHashSet<>();
 
     @Builder
-    public Article(String subject, String contents, Set<String> tags) {
+    public Article(String subject, String contents, Set<Tag> tags) {
         this.subject = subject;
         this.contents = contents;
         this.tags = tags;
     }
 
     public void addTag(String tag){
-        this.tags.add(tag);
+        this.tags.add(new Tag(tag));
     }
 
-    public void initTags(List<String> Tags){
-        this.tags = new HashSet<>(tags);
+    public void initTags(List<String> tags){
+        if(tags != null)
+            this.tags = tags.stream()
+                .map(Tag::new)
+                .collect(Collectors.toSet());
     }
 
     public Article updateContents(String subject, String contents) {

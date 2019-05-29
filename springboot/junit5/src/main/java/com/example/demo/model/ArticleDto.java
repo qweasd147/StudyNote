@@ -4,9 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ArticleDto {
 
@@ -14,9 +17,12 @@ public class ArticleDto {
     @NoArgsConstructor
     public static class CreateReq {
 
+        @NotBlank(message = "제목 필수 입력")
         private String subject;
+
+        @NotBlank(message = "내용 필수 입력")
         private String contents;
-        private List<String> tags;
+        private List<String> tags = new ArrayList<>();
 
         @Builder
         public CreateReq(String subject, String contents, List<String> tags) {
@@ -26,10 +32,21 @@ public class ArticleDto {
         }
 
         public Article toEntity(){
+
+            Set<Tag> tagSet;
+
+            if(tags == null){
+                tagSet = Collections.EMPTY_SET;
+            }else{
+                tagSet = tags.stream()
+                        .map(Tag::new)
+                        .collect(Collectors.toSet());
+            }
+
             return Article.builder()
                     .subject(this.subject)
                     .contents(this.contents)
-                    .tags(new HashSet<>(tags))
+                    .tags(tagSet)
                     .build();
         }
     }
@@ -69,11 +86,15 @@ public class ArticleDto {
 
         public static Resp of(Article article){
 
+            List<String> tagList = article.getTags().stream()
+                    .map(Tag::getTag)
+                    .collect(Collectors.toList());
+
             return Resp.builder()
                     .idx(article.getIdx())
                     .subject(article.getSubject())
                     .contents(article.getContents())
-                    .tags(new ArrayList<>(article.getTags()))
+                    .tags(tagList)
                     .build();
         }
     }
