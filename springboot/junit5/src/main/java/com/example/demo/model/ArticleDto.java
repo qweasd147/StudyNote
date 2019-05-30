@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ArticleDto {
@@ -22,10 +19,10 @@ public class ArticleDto {
 
         @NotBlank(message = "내용 필수 입력")
         private String contents;
-        private List<String> tags = new ArrayList<>();
+        private Set<String> tags = new LinkedHashSet<>();
 
         @Builder
-        public CreateReq(String subject, String contents, List<String> tags) {
+        public CreateReq(String subject, String contents, Set<String> tags) {
             this.subject = subject;
             this.contents = contents;
             this.tags = tags;
@@ -33,21 +30,15 @@ public class ArticleDto {
 
         public Article toEntity(){
 
-            Set<Tag> tagSet;
-
-            if(tags == null){
-                tagSet = Collections.EMPTY_SET;
-            }else{
-                tagSet = tags.stream()
-                        .map(Tag::new)
-                        .collect(Collectors.toSet());
-            }
-
-            return Article.builder()
+            Article article = Article.builder()
                     .subject(this.subject)
                     .contents(this.contents)
-                    .tags(tagSet)
                     .build();
+
+            if(tags != null)
+                article.initTags(tags);
+
+            return article;
         }
     }
 
@@ -57,10 +48,10 @@ public class ArticleDto {
 
         private String subject;
         private String contents;
-        private List<String> tags;
+        private Set<String> tags = new LinkedHashSet<>();
 
         @Builder
-        public ModifyReq(String subject, String contents, List<String> tags) {
+        public ModifyReq(String subject, String contents, Set<String> tags) {
             this.subject = subject;
             this.contents = contents;
             this.tags = tags;
