@@ -6,10 +6,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -18,7 +15,7 @@ public class TestUtils {
     public static String GETTER_PREFIX = "get";
 
     //parameter로 처리 가능한 클래스 목록
-    private static final List<Class> PARAMETER_CLASS_LIST = Arrays.asList(String.class, List.class);
+    private static final List<Class> PARAMETER_CLASS_LIST = Arrays.asList(String.class, List.class, Set.class);
 
     /**
      * Object 필드에 해당 값을 주입한다.
@@ -31,7 +28,7 @@ public class TestUtils {
         Field[] targetFields = target.getClass().getDeclaredFields();
 
         Field searchFiled = Arrays.stream(targetFields)
-                .filter(field -> field.getName() == fieldName)
+                .filter(field -> fieldName.equals(field.getName()))
                 .findAny()
                 .orElseThrow(()->
                         new IllegalStateException(
@@ -64,7 +61,7 @@ public class TestUtils {
         Predicate<Field> isEnableField = makeFieldChecker(dto, ignoreField);
 
         Arrays.stream(target.getDeclaredFields())
-                .filter(isEnableField)                     //handling 가능한 필드인지 체크
+                .filter(isEnableField)                   //handling 가능한 필드인지 체크
                 .map(field -> {
                     String[] fieldValue = convertToArrayStr(dto, field);
                     return Pair.of(field.getName(), fieldValue);
@@ -119,15 +116,14 @@ public class TestUtils {
 
         Class<?> target = object.getClass();
 
-        Predicate<Field> containsIgnoreList = field -> !ignoreField.contains(field.getName());
+        Predicate<Field> containsIgnoreList = field -> ignoreField.contains(field.getName());
 
         Predicate<Field> isAssignType = field -> {
             Class<?> fieldType = field.getType();
 
             //assign class list
             return PARAMETER_CLASS_LIST.stream()
-                    .filter(clazz ->  !fieldType.isAssignableFrom(clazz))
-                    .findAny().isPresent();
+                    .anyMatch(clazz -> fieldType.isAssignableFrom(clazz));
         };
 
         Predicate<Field> hasGetter = field -> {
@@ -138,11 +134,10 @@ public class TestUtils {
         Predicate<Field> hasValue = field -> {
 
             Object value = ReflectionTestUtils.invokeGetterMethod(object, field.getName());
-
             return Objects.nonNull(value);
         };
 
-        return containsIgnoreList
+        return containsIgnoreList.negate()
                 .and(isAssignType)
                 .and(hasGetter)
                 .and(hasValue);
@@ -153,9 +148,9 @@ public class TestUtils {
 
         //TODO : 파라미터가 array, set, 배열일때 일관되게 배열로 내보내게 만들어야됨
         //TODO : generic 타입이 String이 아닐때 ......
-        if(field.getType().isAssignableFrom(List.class)){
-            List<String> listFieldValue = (List<String>) fieldValue;
-            return listFieldValue.toArray(new String[listFieldValue.size()]);
+        if(Collection.class.isAssignableFrom(field.getType())){
+            Collection<String> fieldValues = (Collection<String>) fieldValue;
+            return fieldValues.toArray(new String[fieldValues.size()]);
         }else{
             return new String[]{fieldValue.toString()};
         }
