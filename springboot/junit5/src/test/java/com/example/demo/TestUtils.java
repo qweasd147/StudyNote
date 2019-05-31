@@ -151,6 +151,8 @@ public class TestUtils {
         if(Collection.class.isAssignableFrom(field.getType())){
             Collection<String> fieldValues = (Collection<String>) fieldValue;
             return fieldValues.toArray(new String[fieldValues.size()]);
+        }else if(field.getType().isArray()){
+            return (String[]) fieldValue;
         }else{
             return new String[]{fieldValue.toString()};
         }

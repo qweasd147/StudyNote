@@ -77,15 +77,12 @@ public class ControllerTest {
                 .contents("mock contents")
                 .build();
 
-        Article article = createReqDto.toEntity();
-        TestUtils.injectValue(article, "idx", 10L);
-
-        given(articleService.register(any())).willReturn(article);
-
         mockMvc.perform(TestUtils.addDtoParamsInRequestBody(post(ARTICLE_API), createReqDto)
                 .characterEncoding("utf-8")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
+
+
 }
