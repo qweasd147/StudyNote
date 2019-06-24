@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,6 +34,14 @@ public class ArticleController {
         result.put("contents", articlePages.getContent());
         result.put("count", articlePages.getTotalElements());
         result.put("page", articlePages.getNumber() + 1);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/by_tag")
+    public ResponseEntity searchAllByTags(ArticleDto.ListReq listReq){
+
+        List<Article> result = articleService.searchAllByTags(listReq.getTags());
 
         return ResponseEntity.ok(result);
     }

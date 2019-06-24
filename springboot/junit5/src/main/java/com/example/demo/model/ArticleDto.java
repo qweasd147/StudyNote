@@ -89,4 +89,16 @@ public class ArticleDto {
                     .build();
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class ListReq {
+
+        private List<String> tags;
+
+        @Builder
+        public ListReq(List<String> tags) {
+            this.tags = tags;
+        }
+    }
 }

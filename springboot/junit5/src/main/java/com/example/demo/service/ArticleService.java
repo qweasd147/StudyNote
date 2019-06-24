@@ -9,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -42,5 +45,9 @@ public class ArticleService {
 
     public void remove(Long articleIdx){
         articleRepository.deleteById(articleIdx);
+    }
+
+    public List<Article> searchAllByTags(List<String> tags){
+        return articleRepository.findBySeveralTags(tags);
     }
 }
