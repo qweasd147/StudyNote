@@ -1,0 +1,4 @@
+elasticsearch:
+  clustername: docker-cluster
+  host: localhost
+  port: 9300
