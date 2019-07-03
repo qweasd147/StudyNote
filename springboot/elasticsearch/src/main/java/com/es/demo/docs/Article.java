@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -40,6 +41,14 @@ public class Article {
 
         if(!StringUtils.isEmpty(tag));
         this.tags.add(tag.trim());
+    }
+
+    public void addTags(Set<String> tags){
+
+        if(this.tags == null)   this.tags = new ArrayList<>();
+
+        tags.stream()
+                .forEach(tag -> addTag(tag));
     }
 
     public Article updateContents(String subject, String contents) {
