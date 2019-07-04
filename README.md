@@ -1,7 +1,5 @@
 ## 공부한 기록들
 
-[elk](https://github.com/qweasd147/StudyNote/tree/master/elk)
-
 1. JAVA
     * [enum](https://github.com/qweasd147/StudyNote/tree/master/java/src/enums)
     * [generics](https://github.com/qweasd147/StudyNote/tree/master/java/src/generics)
