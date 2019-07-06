@@ -28,10 +28,8 @@ public class ArticleService {
     }
 
     public Article modify(String articleIdx, ArticleDto.ModifyReq modifyReq){
-
         Article article = articleRepository.findById(articleIdx)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 번호" + articleIdx));
-
 
         article.getTags().clear();
         article
