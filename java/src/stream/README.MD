@@ -499,3 +499,45 @@ concat
 스레드 개수 또한 알아서 정해져 있고(기본 코어 개수) 변경은 가능하지만 추천하지는 않는다. 아무튼 이러한 방법으로
 
 내가(개발자가) 아닌 시스템이 알아서 처리하는 고수준 코딩이 가능하다.
+
+### 4.8 Checked Exception 처리 불가
+
+스트림 처리중엔 `Checked Exception`은 밖으로 던질 수가 없다.
+
+```java
+    public static String encodeWithEx(String str) throws UnsupportedEncodingException {
+
+        return URLEncoder.encode(str, "utf-8");
+    }
+```
+위와 같은 메소드가 있을 때 스트림에서 Exception을 상위로 던지는걸 유도하고 싶을 수도 있지만 불가능하다.
+
+```java
+        strs.stream()
+            .map(WithCheckedEx::encodeWithEx)   //ERROR!
+            .collect(Collectors.toList());
+```
+
+내부적인 이유는 잘 모르겠지만 설계상 미스 or `Checked Exception`은 사실상 버려진 ? 그런 평가를 스택오버플로우에서 종종 봤다.
+
+아무튼 `Checked Exception`은 한번 랩핑해서 `RunTime Exception`으로 던지도록 할수밖에 없다.
+
+```java
+    public static String encodeWithoutEx(String str){
+
+        try {
+            return URLEncoder.encode(str, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+
+        List<String> strs = Arrays.asList("첫번째", "두번째", "세번째");
+
+        strs.stream()
+                .map(WithCheckedEx::encodeWithoutEx)
+                .collect(Collectors.toList());
+    }
+```
