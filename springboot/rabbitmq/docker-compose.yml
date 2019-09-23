@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+
+  rabbitmq:
+    container_name: dynamoDB_local
+    image: rabbitmq:3.8.0-rc.1-management
+    restart: always
+    volumes:
+      - "~/data/rabbitmq:/var/lib/rabbitmq"
+    hostname: rabbit1
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "joo"
+      RABBITMQ_DEFAULT_USER: "joohyung"
+      RABBITMQ_DEFAULT_PASS: "joo123"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - 5672:5672
+      - 15672:15672
