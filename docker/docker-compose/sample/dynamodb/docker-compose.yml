@@ -1,0 +1,29 @@
+version: '3.1'
+
+services:
+
+  admin:
+    container_name: dynamodb-admin
+    build:
+      context: .
+      dockerfile: DockerfileDev
+    restart: always
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb:8000
+      AWS_REGION: ap-southeast-2
+    links:
+      - "dynamodb"
+    ports:
+      - 8001:8001
+  S3:
+    container_name: local_s3
+    image: scality/s3server
+    restart: always
+    ports:
+      - 8002:8002
+  dynamodb:
+    container_name: local_dynamodb
+    image : amazon/dynamodb-local:1.11.477
+    restart: always
+    ports:
+      - 8000:8000

@@ -1,0 +1,8 @@
+FROM node:10.16.3-alpine
+
+RUN npm install dynamodb-admin -g
+
+#export DYNAMO_ENDPOINT=http://localhost:8000
+#export AWS_REGION=ap-southeast-2
+
+CMD ["dynamodb-admin"]
