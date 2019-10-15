@@ -5,4 +5,9 @@ spring:
     port: 5672
     username: joohyung
     password: joo123
-    virtual-host: /
+
+logging:
+  level:
+    org.springframework.core.task.SimpleAsyncTaskExecutor: TRACE
+    org.springframework.amqp.core.AbstractExchange: TRACE
+    org.springframework.amqp.rabbit.core.RabbitAdmin: TRACE

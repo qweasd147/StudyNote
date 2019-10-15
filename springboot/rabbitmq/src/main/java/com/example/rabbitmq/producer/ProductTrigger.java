@@ -1,5 +1,6 @@
 package com.example.rabbitmq.producer;
 
+import com.example.rabbitmq.Item;
 import com.example.rabbitmq.config.RabbitmqConfig;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
+
+import static com.example.rabbitmq.config.RabbitmqConfig.TOPIC_EXCHANGE_NAME;
 
 @Component
 @AllArgsConstructor
@@ -28,7 +31,15 @@ public class ProductTrigger {
     }
 
     private IntConsumer makeConverter(){
-        return (num)-> rabbitTemplate.convertAndSend
-                (RabbitmqConfig.QUEUE_NAME, "foo.bar.baz", "message"+num);
+        return (num)-> {
+            //rabbitTemplate.convertAndSend
+            //        (TOPIC_EXCHANGE_NAME, "foo.bar.baz", "message"+num);
+
+
+            Item item = Item.builder().data("data" + num).number(num).build();
+
+            rabbitTemplate.convertAndSend
+                    (TOPIC_EXCHANGE_NAME, "foo.bar.baz2", item);
+        };
     }
 }
