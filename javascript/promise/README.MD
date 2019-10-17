@@ -309,6 +309,7 @@ console.log(p1 === p3);     //false
 
 # 4. es8 async & await
 
+### 4.1 기본 사용
 Promise는 callback hell을 완화 시킬 수 있지만 근본적으로 해결은 힘들다. 그래서 나온것이 es8의 `async`, `await`가 나와
 
 비동기 로직일 지라도 동기적으로 처리가 가능하게 되었다.
@@ -378,6 +379,42 @@ try{
 	await Promise.reject("ERROR!");
 }catch(e){
 	console.log(e); //ERROR!
+}
+```
+
+### 4.2 callback function with promise
+순수 `Promise` 함수를 써서 callback 함수를 사용하는 비동기 함수를 동기식으로 만들어 사용이 가능하다.
+
+예를 들어 아래와 같은 `API Request`를 요청하고 결과값을 처리하는 callback 함수를 요구하는 함수가 있다고 가정. 
+```javascript
+request(url, function(err, result){
+    if(err){
+        //TODO : 에러 처리
+        return;
+    }
+    
+    //TODO : handle result data
+});
+```
+
+당연히 callback 함수는 언제 실행 될지 모른다. 하지만 `Promise`로 한번 감싸고, `await`를 사용해서 결과값을 받을 때 까지 대기가 가능하다.
+```javascript
+function waitUntilRequestEnd(url){
+    return new Promise((resolve, reject)=>{
+        request(url, function(err, result){
+            if(err)
+                reject(err);
+            else
+                resolve(result);
+        });
+    });
+}
+
+//시용 시점
+try{
+    const result = await waitUntilRequestEnd(url);
+}catch(e){
+    //TODO : 에러 처리
 }
 ```
 
