@@ -28,7 +28,7 @@ public class ArticleController {
     @GetMapping
     public ResponseEntity searchAll(@PageableDefault(sort = "idx", direction = Sort.Direction.DESC ,size = 10)Pageable pageable){
 
-        Page<Article> articlePages = articleService.searchAll(pageable);
+        Page<ArticleDto.Resp> articlePages = articleService.searchAll(pageable).map(ArticleDto.Resp::of);
         Map<String, Object> result = new HashMap<>();
 
         result.put("contents", articlePages.getContent());
