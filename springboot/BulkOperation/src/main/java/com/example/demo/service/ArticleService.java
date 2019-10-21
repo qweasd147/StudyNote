@@ -42,10 +42,10 @@ public class ArticleService {
         return article;
     }
 
-    public Article articleModifyWithBulk(){
+    public Article recoveryAfterBulk(Long idx, String bulkSubject, String bulkContents){
 
-        Article article = articleRepository.findById(2L)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 번호" + 1L));
+        Article article = articleRepository.findById(idx)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 번호" + idx));
 
         @NotNull String oldSubject = article.getSubject();
         @NotNull String oldContents = article.getContents();
@@ -53,7 +53,7 @@ public class ArticleService {
         log.info("before bulk");
         log.info(article.toString());
 
-        articleRepository.updateByQuery(article.getIdx(), "bulk subject", "bulk contents");
+        articleRepository.updateByQuery(article.getIdx(), bulkSubject, bulkContents);
 
         log.info("after bulk");
         log.info(article.toString());

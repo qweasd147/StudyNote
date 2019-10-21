@@ -21,7 +21,7 @@ public class ArticleController {
     @ResponseStatus(value = HttpStatus.OK)
     public void articleModifyWithBulk(){
 
-        Article article = articleService.articleModifyWithBulk();
+        Article article = articleService.recoveryAfterBulk(1L, "subject bulk", "Contents bulk");
 
         log.info("end transaction");
         log.info(article.toString());
