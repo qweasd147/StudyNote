@@ -13,5 +13,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("UPDATE Article article SET article.subject = :subject, article.contents = :contents WHERE article.idx = :idx")
     void updateByQuery(@Param("idx") Long idx
                         , @Param("subject") String subject
-                        , @Param("contents") String name);
+                        , @Param("contents") String contents);
 }
