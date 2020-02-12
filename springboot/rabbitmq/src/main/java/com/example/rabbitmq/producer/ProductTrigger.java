@@ -23,20 +23,20 @@ public class ProductTrigger {
     @Scheduled(cron = "1 * * * * *")
     public void schedule() {
 
-        IntConsumer converter = makeConverter();
+        IntConsumer converter = makeConverter(false);
 
-        IntStream.range(1, 100)
+        IntStream.range(1, 5)
                 .parallel()
                 .forEach(converter);
     }
 
-    private IntConsumer makeConverter(){
+    private IntConsumer makeConverter(boolean isThrow){
         return (num)-> {
             //rabbitTemplate.convertAndSend
             //        (TOPIC_EXCHANGE_NAME, "foo.bar.baz", "message"+num);
 
 
-            Item item = Item.builder().data("data" + num).number(num).build();
+            Item item = Item.builder().data("data" + num).number(num).isThrow(isThrow).build();
 
             rabbitTemplate.convertAndSend
                     (TOPIC_EXCHANGE_NAME, "foo.bar.baz2", item);

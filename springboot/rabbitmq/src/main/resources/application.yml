@@ -5,9 +5,18 @@ spring:
     port: 5672
     username: joohyung
     password: joo123
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000    #1초후 다시 시도
+          max-attempts: 3           #최대 3번 실패한 메세지 처리 시도
+          max-interval: 10000       #최대 10초 후 실패한 메세지 처리(밑에 값이랑 연계)
+          multiplier: 2.0           #initial-interval * 시도 회수->3,6,12 ....
 
 logging:
   level:
-    org.springframework.core.task.SimpleAsyncTaskExecutor: TRACE
-    org.springframework.amqp.core.AbstractExchange: TRACE
-    org.springframework.amqp.rabbit.core.RabbitAdmin: TRACE
+    org.springframework:
+      core.task.SimpleAsyncTaskExecutor: TRACE
+      core.AbstractExchange: TRACE
+      amqp.rabbit.core.RabbitAdmin: TRACE

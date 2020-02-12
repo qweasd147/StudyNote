@@ -9,10 +9,12 @@ public class Item {
 
     private String data;
     private Integer number;
+    private boolean isThrow;
 
     @Builder
-    private Item(String data, Integer number){
+    private Item(String data, Integer number, boolean isThrow){
         this.data = data;
         this.number = number;
+        this.isThrow = isThrow;
     }
 }
