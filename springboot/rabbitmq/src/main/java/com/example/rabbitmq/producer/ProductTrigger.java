@@ -20,7 +20,7 @@ public class ProductTrigger {
 
     private RabbitTemplate rabbitTemplate;
 
-    @Scheduled(cron = "1 * * * * *")
+    //@Scheduled(cron = "1 * * * * *")
     public void schedule() {
 
         IntConsumer converter = makeConverter(false);

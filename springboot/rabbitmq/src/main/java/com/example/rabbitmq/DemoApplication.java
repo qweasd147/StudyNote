@@ -31,7 +31,7 @@ public class DemoApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         IntConsumer converter = (num)-> {
-            Item item = Item.builder().data("data" + num).number(num).isThrow(false).build();
+            Item item = Item.builder().data("main app" + num).number(num).isThrow(true).build();
 
             rabbitTemplate.convertAndSend
                     (TOPIC_EXCHANGE_NAME, "foo.bar.baz3", item);

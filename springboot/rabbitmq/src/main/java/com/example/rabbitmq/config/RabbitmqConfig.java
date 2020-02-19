@@ -21,9 +21,16 @@ public class RabbitmqConfig {
     public static final String QUEUE_NAME = "demo-queue-name";
     public static final String TOPIC_EXCHANGE_NAME = QUEUE_NAME+"-exchange";
 
+    public static final String FAIL_QUEUE_NAME = "demo-fail-queue-name";
+
     @Bean
     public Queue queue() {
         return new Queue(QUEUE_NAME, false);
+    }
+
+    @Bean
+    public Queue failQueue() {
+        return new Queue(FAIL_QUEUE_NAME, false);
     }
 
     @Bean
@@ -37,45 +44,16 @@ public class RabbitmqConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
-                                  MessageConverter messageConverter) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(messageConverter);
+        rabbitTemplate.setMessageConverter(messageConverter());
+
         return rabbitTemplate;
     }
 
     @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
-    }
-
-    /*
-    @Bean
-    public RetryTemplate retryTemplate(){
-        RetryTemplate retry = new RetryTemplate();
-        ExponentialBackOffPolicy policy = new ExponentialBackOffPolicy();
-
-        policy.setInitialInterval(3000);    //처음 메세지 처리 실패 시 3초후 다시 메세지 처리
-
-
-        return retry;
-    }
-    */
-
-    public SimpleRabbitListenerContainerFactory listenerContainerFactory(ConnectionFactory connectionFactory){
-
-        final SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setDefaultRequeueRejected(false);
-        factory.setMessageConverter(messageConverter());
-        factory.setChannelTransacted(true);
-        factory.setAdviceChain(RetryInterceptorBuilder
-                .stateless()
-                .maxAttempts(3)
-                //.recoverer(new RepublishMessageRecoverer())
-                .backOffOptions(1000, 2.0, 10000)
-                .build());
-
-        return factory;
     }
 }
