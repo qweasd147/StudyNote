@@ -1,4 +1,5 @@
-elasticsearch:
-  clustername: docker-cluster
-  host: localhost
-  port: 9300
+spring:
+  data:
+    elasticsearch:
+      cluster-name: docker-cluster
+      cluster-nodes: localhost:9300

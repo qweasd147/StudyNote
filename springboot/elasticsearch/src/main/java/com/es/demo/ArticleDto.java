@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ public class ArticleDto {
             Article article = Article.builder()
                     .subject(this.subject)
                     .contents(this.contents)
+                    .createdDate(new Date())
                     .build();
 
             if(tags != null)
@@ -65,14 +67,14 @@ public class ArticleDto {
     @NoArgsConstructor
     public static class Resp {
 
-        private String idx;
+        private String id;
         private String subject;
         private String contents;
         private List<String> tags;
 
         @Builder
-        public Resp(String idx, String subject, String contents, List<String> tags) {
-            this.idx = idx;
+        public Resp(String id, String subject, String contents, List<String> tags) {
+            this.id = id;
             this.subject = subject;
             this.contents = contents;
             this.tags = tags;
@@ -81,7 +83,7 @@ public class ArticleDto {
         public static Resp of(Article article){
 
             return Resp.builder()
-                    .idx(article.getIdx())
+                    .id(article.getId())
                     .subject(article.getSubject())
                     .contents(article.getContents())
                     .tags(article.getTags())
