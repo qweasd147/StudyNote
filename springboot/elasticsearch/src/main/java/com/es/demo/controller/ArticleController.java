@@ -27,7 +27,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public ResponseEntity searchAll(@PageableDefault(sort = "@timestamp", direction = Sort.Direction.DESC ,size = 10) Pageable pageable){
+    public ResponseEntity searchAll(@PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC ,size = 10) Pageable pageable){
 
         Page<Article> articlePages = articleService.searchAll(pageable);
         Map<String, Object> result = new HashMap<>();

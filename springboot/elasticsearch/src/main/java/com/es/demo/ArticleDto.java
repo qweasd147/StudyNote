@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -70,13 +71,15 @@ public class ArticleDto {
         private String id;
         private String subject;
         private String contents;
+        private Date createdDate;
         private List<String> tags;
 
         @Builder
-        public Resp(String id, String subject, String contents, List<String> tags) {
+        public Resp(String id, String subject, String contents, Date createdDate, List<String> tags) {
             this.id = id;
             this.subject = subject;
             this.contents = contents;
+            this.createdDate = createdDate;
             this.tags = tags;
         }
 
@@ -86,6 +89,7 @@ public class ArticleDto {
                     .id(article.getId())
                     .subject(article.getSubject())
                     .contents(article.getContents())
+                    .createdDate(article.getCreatedDate())
                     .tags(article.getTags())
                     .build();
         }
