@@ -37,7 +37,7 @@ public class ArticleDto {
             Article article = Article.builder()
                     .subject(this.subject)
                     .contents(this.contents)
-                    .createdDate(new Date())
+                    .createdDate(LocalDateTime.now())
                     .build();
 
             if(tags != null)
@@ -71,11 +71,11 @@ public class ArticleDto {
         private String id;
         private String subject;
         private String contents;
-        private Date createdDate;
+        private LocalDateTime createdDate;
         private List<String> tags;
 
         @Builder
-        public Resp(String id, String subject, String contents, Date createdDate, List<String> tags) {
+        public Resp(String id, String subject, String contents, LocalDateTime createdDate, List<String> tags) {
             this.id = id;
             this.subject = subject;
             this.contents = contents;

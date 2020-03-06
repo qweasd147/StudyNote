@@ -13,8 +13,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -34,12 +34,13 @@ public class Article {
 
     @Field(type = FieldType.Date, store = true, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     @JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private Date createdDate = new Date();
+    @JsonProperty("@timestamp")
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     private List<String> tags = new ArrayList<>();
 
     @Builder
-    public Article(String subject, String contents, Date createdDate, List<String> tags) {
+    public Article(String subject, String contents, LocalDateTime createdDate, List<String> tags) {
         this.subject = subject;
         this.contents = contents;
         this.createdDate = createdDate;
