@@ -4,9 +4,12 @@ import com.es.demo.ArticleDto;
 import com.es.demo.docs.Article;
 import com.es.demo.repository.ArticleRepository;
 import lombok.AllArgsConstructor;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 
 @Service
@@ -15,8 +18,12 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
 
-    public Page<Article> searchAll(Pageable pageable){
-        return articleRepository.findAll(pageable);
+    public Page<Article> searchAll(ArticleDto.ListReq searchRequestDto, Pageable pageable){
+
+        if(StringUtils.isEmpty(searchRequestDto.getKeyword()))
+            return articleRepository.findAll(pageable);
+
+        return articleRepository.findAllByContentsLike("*"+searchRequestDto.getKeyword()+"*", pageable);
     }
 
     public Article searchOne(String articleIdx){

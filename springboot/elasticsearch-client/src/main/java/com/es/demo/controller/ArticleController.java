@@ -4,6 +4,7 @@ package com.es.demo.controller;
 import com.es.demo.ArticleDto;
 import com.es.demo.docs.Article;
 import com.es.demo.service.ArticleService;
+import com.es.demo.service.JpaArticleServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,12 +24,14 @@ import java.util.Map;
 @AllArgsConstructor
 public class ArticleController {
 
-    private final ArticleService articleService;
+    private final JpaArticleServiceImpl articleService;
 
     @GetMapping
-    public ResponseEntity searchAll(@PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC ,size = 10) Pageable pageable){
+    public ResponseEntity searchAll(@PageableDefault(sort = "createdDate", direction = Sort.Direction.DESC ,size = 10)
+                Pageable pageable, ArticleDto.ListReq searchRequestDto
+    ){
 
-        Page<Article> articlePages = articleService.searchAll(pageable);
+        Page<Article> articlePages = articleService.searchAll(searchRequestDto,  pageable);
         Map<String, Object> result = new HashMap<>();
 
         result.put("contents", articlePages.getContent());

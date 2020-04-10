@@ -99,10 +99,14 @@ public class ArticleDto {
     @NoArgsConstructor
     public static class ListReq {
 
+        private String type;
+        private String keyword;
         private List<String> tags;
 
         @Builder
-        public ListReq(List<String> tags) {
+        private ListReq(String type, String keyword, List<String> tags) {
+            this.type = type;
+            this.keyword = keyword;
             this.tags = tags;
         }
     }
