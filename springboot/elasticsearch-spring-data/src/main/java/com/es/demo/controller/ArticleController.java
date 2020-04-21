@@ -31,7 +31,9 @@ public class ArticleController {
                 Pageable pageable, ArticleDto.ListReq searchRequestDto
     ){
 
-        Page<Article> articlePages = articleService.searchAll(searchRequestDto,  pageable);
+        //Page<Article> articlePages = articleService.searchAll(searchRequestDto,  pageable);
+        Page<Article> articlePages = articleService.searchAllLike(searchRequestDto,  pageable);
+
         Map<String, Object> result = new HashMap<>();
 
         result.put("contents", articlePages.getContent());

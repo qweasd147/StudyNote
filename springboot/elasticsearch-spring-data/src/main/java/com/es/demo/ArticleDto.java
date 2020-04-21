@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,12 +23,15 @@ public class ArticleDto {
 
         @NotBlank(message = "내용 필수 입력")
         private String contents;
+        @NotNull(message = "타입 필수 입력")
+        private ArticleType type;
         private Set<String> tags = new LinkedHashSet<>();
 
         @Builder
-        public CreateReq(String subject, String contents, Set<String> tags) {
+        public CreateReq(String subject, String contents, ArticleType type, Set<String> tags) {
             this.subject = subject;
             this.contents = contents;
+            this.type = type;
             this.tags = tags;
         }
 
@@ -37,6 +40,7 @@ public class ArticleDto {
             Article article = Article.builder()
                     .subject(this.subject)
                     .contents(this.contents)
+                    .articleType(this.type)
                     .createdDate(LocalDateTime.now())
                     .build();
 
@@ -100,7 +104,7 @@ public class ArticleDto {
     public static class ListReq {
 
         private String type;
-        private String keyword;
+        private String keyword = "";
         private List<String> tags;
 
         @Builder

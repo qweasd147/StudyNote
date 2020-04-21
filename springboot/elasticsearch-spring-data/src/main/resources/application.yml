@@ -3,6 +3,10 @@ spring:
     elasticsearch:
       cluster-name: docker-cluster
       cluster-nodes: localhost:9300
+      #properties:
+        #index:
+          #search.slowlog.threshold.queryquery.info: 1ms
+
 
 
 
@@ -10,3 +14,7 @@ spring:
 logging:
   level:
     org.springframework.web.client.RestTemplate: TRACE
+    org:
+      elasticsearch:
+        index.search.slowlog.query: INFO
+    org.springframework.data.elasticsearch.client.WIRE: trace

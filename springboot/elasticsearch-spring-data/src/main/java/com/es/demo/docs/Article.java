@@ -1,5 +1,6 @@
 package com.es.demo.docs;
 
+import com.es.demo.ArticleType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -32,6 +33,8 @@ public class Article {
     @NotNull
     private String contents;
 
+    private ArticleType articleType;
+
     @Field(type = FieldType.Date, store = true, format = DateFormat.custom, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     @JsonFormat (shape = JsonFormat.Shape.STRING, pattern ="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     @JsonProperty("@timestamp")
@@ -40,9 +43,11 @@ public class Article {
     private List<String> tags = new ArrayList<>();
 
     @Builder
-    public Article(String subject, String contents, LocalDateTime createdDate, List<String> tags) {
+    private Article(String subject, String contents, ArticleType articleType
+            , LocalDateTime createdDate, List<String> tags) {
         this.subject = subject;
         this.contents = contents;
+        this.articleType = articleType;
         this.createdDate = createdDate;
         this.tags = tags;
     }
