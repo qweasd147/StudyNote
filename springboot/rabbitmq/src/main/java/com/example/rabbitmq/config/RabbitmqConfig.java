@@ -1,19 +1,10 @@
 package com.example.rabbitmq.config;
 
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.retry.RepublishMessageRecoverer;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.support.RetryTemplate;
 
-import java.time.Duration;
 
 @Configuration
 public class RabbitmqConfig {
@@ -39,21 +30,12 @@ public class RabbitmqConfig {
     }
 
     @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
+    public Binding binding(@Qualifier("queue")Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with("foo.bar.#");
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(messageConverter());
-
-        return rabbitTemplate;
-    }
-
-    @Bean
-    public MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public Binding bindingFail(@Qualifier("failQueue")Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(FAIL_QUEUE_NAME);
     }
 }

@@ -28,6 +28,7 @@ public class DemoApplication implements CommandLineRunner {
         SpringApplication.run(DemoApplication.class, args);
     }
 
+
     @Override
     public void run(String... args) throws Exception {
         IntConsumer converter = (num)-> {
@@ -37,8 +38,10 @@ public class DemoApplication implements CommandLineRunner {
                     (TOPIC_EXCHANGE_NAME, "foo.bar.baz3", item);
         };
 
-        IntStream.range(1, 5)
+        /*
+        IntStream.range(1, 2)
                 .parallel()
                 .forEach(converter);
+        */
     }
 }

@@ -5,6 +5,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
+@Setter
 public class Item {
 
     private String data;
