@@ -10,8 +10,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.example.rabbitmq.config.RabbitmqConfig.FAIL_QUEUE_NAME;
-import static com.example.rabbitmq.config.RabbitmqConfig.TOPIC_EXCHANGE_NAME;
 
 
 @RequiredArgsConstructor

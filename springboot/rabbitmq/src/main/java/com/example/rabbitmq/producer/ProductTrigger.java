@@ -8,6 +8,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
@@ -32,8 +34,6 @@ public class ProductTrigger {
 
     private IntConsumer makeConverter(){
         return (num)-> {
-            //rabbitTemplate.convertAndSend
-            //        (TOPIC_EXCHANGE_NAME, "foo.bar.baz", "message"+num);
 
             boolean randomBoolean = Math.random() < 0.5;
 
