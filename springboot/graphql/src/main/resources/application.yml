@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    platform: init
+    initialization-mode: always
+    driver-class-name: org.h2.Driver
+  jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

@@ -1,0 +1,17 @@
+schema {
+    query: Query
+}
+
+type Query {
+    article(id: ID!): Article
+    articles: [Article]
+}
+
+#scalar DateTime
+
+type Article {
+    idx: ID
+    subject: String
+    contents: String
+    #createdDate: DateTime
+}
