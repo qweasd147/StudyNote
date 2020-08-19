@@ -36,6 +36,8 @@ public class ShutdownListener implements TomcatConnectorCustomizer, ApplicationL
     public void onApplicationEvent(ContextClosedEvent event) {
 
         this.connector.pause();
+        this.connector.getProtocolHandler().closeServerSocketGraceful();
+
         Executor executor = this.connector.getProtocolHandler().getExecutor();
 
         if (!(executor instanceof ThreadPoolExecutor))  return;
