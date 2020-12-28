@@ -2,6 +2,7 @@ package com.example.demo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
+import org.apache.coyote.ProtocolHandler;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  *
  * https://blog.marcosbarbero.com/graceful-shutdown-spring-boot-apps/
  */
-//@Component
+@Component
 @Slf4j
 public class ShutdownListener implements TomcatConnectorCustomizer, ApplicationListener<ContextClosedEvent> {
 
@@ -45,17 +46,19 @@ public class ShutdownListener implements TomcatConnectorCustomizer, ApplicationL
         try {
             ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
             threadPoolExecutor.shutdown();
-            if (!threadPoolExecutor.awaitTermination(TIMEOUT, TimeUnit.SECONDS)) {
-                log.warn("Tomcat thread pool did not shut down gracefully within "
-                        + TIMEOUT + " seconds. Proceeding with forceful shutdown");
 
-                threadPoolExecutor.shutdownNow();
-
-                if (!threadPoolExecutor.awaitTermination(TIMEOUT, TimeUnit.SECONDS)) {
-                    log.error("Tomcat thread pool did not terminate");
-                }
-            }else {
+            if(threadPoolExecutor.awaitTermination(TIMEOUT, TimeUnit.SECONDS)){
                 log.info("success close application");
+                return;
+            }
+
+            log.warn("Tomcat thread pool did not shut down gracefully within "
+                    + TIMEOUT + " seconds. Proceeding with forceful shutdown");
+
+            threadPoolExecutor.shutdownNow();
+
+            if (!threadPoolExecutor.awaitTermination(TIMEOUT, TimeUnit.SECONDS)) {
+                log.error("Tomcat thread pool did not terminate");
             }
         } catch (InterruptedException ex) {
 
