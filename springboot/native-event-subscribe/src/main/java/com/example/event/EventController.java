@@ -21,5 +21,6 @@ public class EventController {
 
         this.eventPublisher.publish(Event.createType1());
         this.eventPublisher.publish(Event.createType2());
+        this.eventPublisher.publish(SubEvent.createType2());
     }
 }
