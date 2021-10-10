@@ -1,16 +1,22 @@
 package com.graphql.demo.config;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import graphql.kickstart.tools.SchemaParserOptions;
 import graphql.scalars.ExtendedScalars;
-import graphql.schema.idl.RuntimeWiring;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import graphql.schema.GraphQLScalarType;
 
-@Configuration
+//@Configuration
 public class GraphqlConfig {
 
-    @Bean
-    public void graphqlType(){
-        //RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Date);
-        RuntimeWiring.newRuntimeWiring().scalar(ExtendedScalars.Date);
+    //@Bean
+    public GraphQLScalarType dateTimeType() {
+        return ExtendedScalars.DateTime;
+    }
+
+    //@Bean
+    public SchemaParserOptions schemaParserOptions(){
+        return SchemaParserOptions.newOptions().objectMapperConfigurer((mapper, context) -> {
+            mapper.registerModule(new JavaTimeModule());
+        }).build();
     }
 }

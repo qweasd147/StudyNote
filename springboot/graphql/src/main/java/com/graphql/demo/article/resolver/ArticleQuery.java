@@ -1,8 +1,8 @@
-package com.graphql.demo.article.graphql;
+package com.graphql.demo.article.resolver;
 
-import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.graphql.demo.article.Article;
 import com.graphql.demo.article.service.ArticleService;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,0 +1,23 @@
+extend type Query {
+    article(id: ID!): Article
+    articles: [Article!]!
+}
+
+#scalar DateTime
+scalar LocalDateTime
+
+type Article {
+    idx: ID
+    subject: String
+    contents: String
+    createdDate: LocalDateTime
+}
+
+extend type Mutation {
+    createArticle(createArticleParam: CreateArticleParam) : Article!
+}
+
+input CreateArticleParam {
+    subject: String!
+    contents: String!
+}

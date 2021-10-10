@@ -1,6 +1,7 @@
 package com.graphql.demo.article.service;
 
 import com.graphql.demo.article.Article;
+import com.graphql.demo.article.ArticleDTO;
 import com.graphql.demo.article.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,10 @@ public class ArticleService {
     public Optional<Article> findByIdx(Long articleIdx){
 
         return articleRepository.findByIdx(articleIdx);
+    }
+
+    public Article create(ArticleDTO.CreateRequest requestParam){
+
+        return articleRepository.save(requestParam.toEntity());
     }
 }

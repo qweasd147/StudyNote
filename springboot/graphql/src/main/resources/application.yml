@@ -12,3 +12,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+
+
+graphql:
+  servlet:
+    enabled: true
+    mapping: /graphql
+    corsEnabled: false
+    cors:
+      allowed-origins: http://localhost:8080
+      allowed-methods: GET, HEAD, POST, PATCH
+    exception-handlers-enabled: true
+    context-setting: PER_REQUEST_WITH_INSTRUMENTATION
+  tools:
+    schema-location-pattern: "**/graphql/*.graphqls"
+    #schema-location-pattern: "resources/graphql/*.graphqls"
+    introspection-enabled: true
