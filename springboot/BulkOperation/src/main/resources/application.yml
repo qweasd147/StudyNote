@@ -13,6 +13,12 @@ spring:
         format_sql: true
 
 
-#logging:
-#  level:
-#    org.hibernate.type: TRACE
+logging:
+  level:
+    #org.hibernate: trace
+    org.hibernate.event: trace
+
+      #springframework.orm.jpa: trace
+
+    #org.hibernate.type: TRACE
+

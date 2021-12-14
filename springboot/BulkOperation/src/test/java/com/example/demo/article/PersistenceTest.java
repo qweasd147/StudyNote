@@ -2,40 +2,29 @@ package com.example.demo.article;
 
 import com.example.demo.model.Article;
 import com.example.demo.repository.ArticleRepository;
-import com.example.demo.repository.TagRepository;
 import com.example.demo.service.ArticleService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnitUtil;
-import javax.persistence.PersistenceUtil;
 
-import java.util.Optional;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@AutoConfigureMockMvc
 @SpringBootTest
 @Transactional
 public class PersistenceTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private ArticleService articleService;
@@ -102,7 +91,7 @@ public class PersistenceTest {
     @DisplayName("flush 사용하여 캐싱 데이터 DB 반영 테스트")
     public void useFlush(){
 
-        articleRepository.findById(4L).get();   //캐싱 유도
+        articleRepository.findById(4L).get();   //1차 캐싱 유도
 
         articleRepository.updateByQuery(4L, "update subject", "update contents");
 
@@ -121,5 +110,64 @@ public class PersistenceTest {
 
         assertThat(afterFlushAndClear.getSubject(), is("flush subject"));
         assertThat(afterFlushAndClear.getContents(), is("flush content"));
+    }
+
+    @Test
+    @DisplayName("flush를 유도해서 사용하여 캐싱 데이터 DB 반영 테스트. annotation 기반으로")
+    public void useFlushByAnnotation(){
+
+        Article data = articleRepository.findById(5L).get();   //캐싱 유도
+
+        //articleRepository.updateByQuery(5L, "update subject", "update contents");
+
+        data.updateSubject("subject");
+
+        articleRepository.updateByQueryAndAutoClear(5L, "flush subject", "flush content");
+
+
+        Article afterFlushAndClear = articleRepository.findById(5L).get();  //반영된 데이터 db에서 조회한다.
+
+        assertThat(afterFlushAndClear.getSubject(), is("flush subject"));
+        assertThat(afterFlushAndClear.getContents(), is("flush content"));
+    }
+
+    @Test
+    @DisplayName("벌크 연산 후, clear를 안하고 조회하면 기존 영속성 컨텍스트는 실제랑 안맞음")
+    public void contextTest1(){
+
+        //1차 캐싱 유도
+        articleRepository.findById(6L).get();
+
+        //벌크 연산을 통해 영속성 컨텍스트를 깨트림
+        articleRepository.updateByQuery(6L, "update subject", "update contents");
+
+        //실제 db가 아닌 영속성 컨텍스트에서 값조회(정확하지가 않음)
+        Article afterBulk = articleRepository.findById(6L).get();
+
+        //잘못된 영속성 컨텍스트에서 조회해서 값이 정확하지가 않다.
+        then(afterBulk.getSubject())
+                .isNotEqualTo("update subject");
+        then(afterBulk.getContents())
+                .isNotEqualTo("update contents");
+    }
+
+    @Test
+    @DisplayName("벌크 연산 후, clear하고 재조회 하면 정확한 값을 얻을 수가 있다.")
+    public void contextTest2(){
+
+        //1차 캐싱 유도
+        articleRepository.findById(7L).get();
+
+        //벌크 연산을 통해 영속성 컨텍스트를 깨뜨리고 clear한다.
+        articleRepository.updateByQueryAndAutoClear(7L, "update subject", "update contents");
+
+        //실제 db에서 재조회 한다.
+        Article afterBulkAndClear = articleRepository.findById(7L).get();
+
+        //잘못된 영속성 컨텍스트에서 조회해서 값이 정확하지가 않다.
+        then(afterBulkAndClear.getSubject())
+                .isEqualTo("update subject");
+        then(afterBulkAndClear.getContents())
+                .isEqualTo("update contents");
     }
 }

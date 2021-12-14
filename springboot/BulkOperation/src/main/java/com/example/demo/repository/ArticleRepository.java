@@ -14,4 +14,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     void updateByQuery(@Param("idx") Long idx
                         , @Param("subject") String subject
                         , @Param("contents") String contents);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("UPDATE Article article SET article.subject = :subject, article.contents = :contents WHERE article.idx = :idx")
+    void updateByQueryAndAutoClear(@Param("idx") Long idx
+            , @Param("subject") String subject
+            , @Param("contents") String contents);
 }
