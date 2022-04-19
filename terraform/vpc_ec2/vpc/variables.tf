@@ -1,5 +1,4 @@
 variable "vpc_info" {
-  #default = "test_vpc"
   type = map(string)
 
   default = {
@@ -8,10 +7,12 @@ variable "vpc_info" {
   }
 }
 
+/*
 variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
   type    = string
 }
+*/
 
 variable "pub-subnets" {
   type = map(object({

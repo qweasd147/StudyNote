@@ -69,3 +69,8 @@ module "alb" {
     module.ec2-web-server
   ]
 }
+
+
+output "al_dns_name" {
+  value = module.alb.alb_dns_name
+}
