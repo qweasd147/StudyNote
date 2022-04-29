@@ -1,8 +1,37 @@
+locals {
+
+  ab-ingresses = {
+    http = {
+      from_port = 80
+      to_port   = 80
+      protocol  = "TCP"
+    },
+    https = {
+      from_port = 443
+      to_port   = 443
+      protocol  = "TCP"
+    }
+  }
+}
+
 resource "aws_security_group" "server-allow-web" {
   name        = "allow_web-sg"
   description = "Allow web-sg inbound traffic"
   vpc_id      = var.vpc-id
 
+  dynamic "ingress" {
+    for_each = local.ab-ingresses
+
+    content {
+      description = "ab allow ${ingress.key}"
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  /*
   ingress {
     description = "web from VPC"
     from_port   = 0
@@ -10,6 +39,7 @@ resource "aws_security_group" "server-allow-web" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  */
 
   egress {
     from_port   = 0
