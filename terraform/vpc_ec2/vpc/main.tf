@@ -20,7 +20,8 @@ resource "aws_subnet" "sub-pub" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.vpc_info.name}-sub-pub"
+    Name   = "${var.vpc_info.name}-sub-pub"
+    Public = "true"
   }
 }
 
@@ -56,7 +57,8 @@ resource "aws_route_table" "rt-pub" {
   }
 
   tags = {
-    Name = "rt-pub-sub"
+    Name   = "rt-pub-sub"
+    Public = "false"
   }
 }
 
@@ -79,7 +81,7 @@ resource "aws_route_table" "rt-pri" {
   }
 
   tags = {
-    Name = "rt-pri"
+    Name = "rt-pri-${each.key}"
   }
 }
 
@@ -110,6 +112,6 @@ resource "aws_nat_gateway" "nat-gw" {
   subnet_id     = aws_subnet.sub-pub[local.subnets_pri_pub_mapping[each.key]].id
 
   tags = {
-    Name = "pub-nat-gw"
+    Name = "pub-nat-gw-${each.key}"
   }
 }

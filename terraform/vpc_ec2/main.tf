@@ -14,6 +14,14 @@ provider "aws" {
   shared_credentials_files = ["/Users/joohyung/.aws/credentials_joo"]
 }
 
+data "aws_key_pair" "for_bastion_key_pair" {
+  key_name = "tf-key-pair"
+}
+
+data "aws_key_pair" "private_instance_key_pair" {
+  key_name = "tf-private-key"
+}
+
 module "vpc" {
   source = "./vpc"
 }
@@ -28,7 +36,7 @@ module "ec2-web-server" {
       ami           = "ami-014009fa4a1467d53"
       az            = "ap-northeast-2a"
       instance_type = "t2.micro"
-      key_pair      = null
+      key_pair      = data.aws_key_pair.private_instance_key_pair.key_name
       sg_ids        = []
       subnet_id     = module.vpc.sub-pri["pri_sub1_2a"].id
     }
@@ -36,7 +44,7 @@ module "ec2-web-server" {
       ami           = "ami-014009fa4a1467d53"
       az            = "ap-northeast-2c"
       instance_type = "t2.micro"
-      key_pair      = null
+      key_pair      = data.aws_key_pair.private_instance_key_pair.key_name
       sg_ids        = []
       #subnet_id     = module.vpc.sub-pri.pri_sub2_2c.id
       subnet_id = module.vpc.sub-pri["pri_sub2_2c"].id
@@ -47,7 +55,7 @@ module "ec2-web-server" {
     ami              = "ami-014009fa4a1467d53"
     az               = "ap-northeast-2a"
     instance_type    = "t2.micro"
-    key_pair         = "tf-key-pair"
+    key_pair         = data.aws_key_pair.for_bastion_key_pair.key_name
     public_subnet_id = module.vpc.sub-pub["pub_sub1_2a"].id
     sg_ids           = []
   }
@@ -57,6 +65,7 @@ module "ec2-web-server" {
     module.vpc
   ]
 }
+
 
 module "alb" {
   source = "./alb"
@@ -71,6 +80,14 @@ module "alb" {
 }
 
 
-output "al_dns_name" {
+output "alb_dns_name" {
   value = module.alb.alb_dns_name
+}
+
+output "server-private-ip" {
+  value = module.ec2-web-server.server-instances-private-ip
+}
+
+output "bastion-public-ip" {
+  value = module.ec2-web-server.bastion-public-ip
 }
