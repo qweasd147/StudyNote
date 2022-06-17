@@ -1,14 +1,34 @@
+locals {
+
+  allow-web-ingresses = {
+    http = {
+      from_port = 80
+      to_port   = 80
+      protocol  = "TCP"
+    },
+    https = {
+      from_port = 443
+      to_port   = 443
+      protocol  = "TCP"
+    }
+  }
+}
+
 resource "aws_security_group" "sg-alb" {
-  name        = "allow_alb"
+  name        = "sg_allow_alb"
   description = "Allow alb inbound traffic"
   vpc_id      = var.vpc-id
 
-  ingress {
-    description = "alb from VPC"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = local.allow-web-ingresses
+
+    content {
+      description = "alb allow ${ingress.key}"
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   }
 
   egress {

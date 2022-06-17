@@ -2,16 +2,18 @@ locals {
 
   alb-ingresses = {
     http = {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "TCP"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port       = 80
+      to_port         = 80
+      protocol        = "TCP"
+      cidr_blocks     = var.sg_alb_id == null ? ["0.0.0.0/0"] : null
+      security_groups = var.sg_alb_id == null ? null : [var.sg_alb_id]
     },
     https = {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "TCP"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port       = 443
+      to_port         = 443
+      protocol        = "TCP"
+      cidr_blocks     = var.sg_alb_id == null ? ["0.0.0.0/0"] : null
+      security_groups = var.sg_alb_id == null ? null : [var.sg_alb_id]
     }
   }
 }
@@ -35,11 +37,12 @@ resource "aws_security_group" "server-allow-port" {
     for_each = local.alb-ingresses
 
     content {
-      description = "alb allow ${ingress.key}"
-      from_port   = ingress.value.from_port
-      to_port     = ingress.value.to_port
-      protocol    = ingress.value.protocol
-      cidr_blocks = ingress.value.cidr_blocks
+      description     = "alb allow ${ingress.key}"
+      from_port       = ingress.value.from_port
+      to_port         = ingress.value.to_port
+      protocol        = ingress.value.protocol
+      cidr_blocks     = ingress.value.cidr_blocks
+      security_groups = ingress.value.security_groups
     }
   }
 

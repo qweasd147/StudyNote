@@ -28,8 +28,9 @@ module "vpc" {
 
 module "ec2-web-server" {
 
-  source = "./ec2"
-  vpc-id = module.vpc.vpc-id
+  source    = "./ec2"
+  vpc-id    = module.vpc.vpc-id
+  sg_alb_id = module.alb.sg_alb_id
 
   ec2-instance = {
     "web-2a" = {
@@ -74,9 +75,11 @@ module "alb" {
   link-pub-subnets-id   = [for sub-pub in module.vpc.sub-pub : sub-pub.id]
   link-ec2-instances-id = module.ec2-web-server.server-instances-id
 
+  /*
   depends_on = [
     module.ec2-web-server
   ]
+  */
 }
 
 

@@ -1,3 +1,12 @@
+variable "vpc-id" {
+  type        = string
+  description = "vpc id for security group"
+}
+
+variable "sg_alb_id" {
+
+  default = null
+}
 
 variable "ec2-instance" {
   type = map(object({
@@ -30,11 +39,6 @@ variable "ec2-instance" {
       subnet_id     = "value"
     }
   }
-}
-
-variable "vpc-id" {
-  type        = string
-  description = "vpc id for security group"
 }
 
 variable "bastion-ec2-instance" {
