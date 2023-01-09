@@ -1,7 +1,8 @@
 
 provider "aws" {
   region                   = "ap-northeast-2"
-  shared_credentials_files = ["/Users/joohyung/.aws/credentials_joo"]
+  profile                  = "joo"
+  shared_credentials_files = ["/Users/joohyung.kim/.aws/credentials_joo"]
 }
 
 terraform {
@@ -15,10 +16,21 @@ terraform {
   }
 }
 
+/*
 resource "aws_key_pair" "terraform-key-pair" {
   key_name   = "tf-key-pair"
-  public_key = file("/Users/joohyung/.ssh/tf_key.pub")
+  public_key = file("/Users/joohyung.kim/.ssh/tf_key.pub")
   tags = {
     Name = "tf-for-test"
+  }
+}
+*/
+
+
+resource "aws_key_pair" "terraform-private-key-pair" {
+  key_name   = "tf-private-key"
+  public_key = file("/Users/joohyung.kim/.ssh/tf_private_key.pub")
+  tags = {
+    Name = "tf-for-private-test"
   }
 }

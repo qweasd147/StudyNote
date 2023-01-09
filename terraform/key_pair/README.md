@@ -49,7 +49,22 @@ Host *
 공개키 등록도 일단 뭐 terraform으로 등록하려고 한거긴 한데, 한번 등록하고 더이상 state를 관리하고 싶지 않으면(등록만 terraform, 관리는 안하겠단 의미) 아래 명령어로 state를 다 지워도 된다.
 
 ```sh
-$ terraform state rm
+$ terraform state rm aws_key_pair.terraform-key-pair
 ```
 
 물론 경로는 조심해야한다.
+
+# 4. 개인 설정
+
+해당 프로젝트에서 사용 되는 ssh 키는 아래와 같이 셋팅함
+
+```sh
+$ ssh-keygen -t rsa -b 2048 -C "이메일or코멘트 등등"
+(파일명은 tf_key)
+
+# 만들어진 key pair를 aws 에 등록.
+$ terraform apply
+
+# 상태 삭제
+$ terraform state rm aws_key_pair.terraform-key-pair
+```

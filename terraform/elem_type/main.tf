@@ -11,7 +11,8 @@ terraform {
 
 provider "aws" {
   region                   = "ap-northeast-2"
-  shared_credentials_files = ["/Users/joohyung/.aws/credentials_joo"]
+  profile                  = "joo"
+  shared_credentials_files = ["/Users/joohyung.kim/.aws/credentials_joo"]
 }
 
 variable "list_string" {

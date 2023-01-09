@@ -11,7 +11,8 @@ terraform {
 
 provider "aws" {
   region                   = "ap-northeast-2"
-  shared_credentials_files = ["/Users/joohyung/.aws/credentials_joo"]
+  profile                  = "joo"
+  shared_credentials_files = ["/Users/joohyung.kim/.aws/credentials_joo"]
 }
 
 data "aws_key_pair" "for_bastion_key_pair" {

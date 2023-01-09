@@ -29,7 +29,7 @@ locals {
 
 resource "aws_security_group" "server-allow-port" {
 
-  name        = "sg_private_servert"
+  name        = "sg_private_server"
   description = "Allow private web-sg inbound traffic"
   vpc_id      = var.vpc-id
 
