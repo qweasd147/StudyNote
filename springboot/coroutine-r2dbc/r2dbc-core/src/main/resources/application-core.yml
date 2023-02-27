@@ -1,0 +1,32 @@
+spring:
+  r2dbc:
+    url: r2dbc:pool:mysql://localhost:3306/test_db?zeroDateTimeBehavior=convertToNull&useSSL=false&useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          auto: update
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: jdbc:mysql://localhost:3306/trustay_test?zeroDateTimeBehavior=convertToNull&useSSL=false&useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    user: root
+    password:
+  web:
+    resources.static-locations: file:src/main/resources/
+
+
+logging:
+  level:
+    org.springframework.data.r2dbc: DEBUG
+    org.springframework.r2dbc.R2dbcTransactionManager: debug # for transaction
+    org.springframework.r2dbc.core.DefaultDatabaseClient: debug # for query
+    org.springframework.r2dbc.connection: trace
+    #com.github.jasync.sql.db.mysql: trace
+    #org.flywaydb: trace

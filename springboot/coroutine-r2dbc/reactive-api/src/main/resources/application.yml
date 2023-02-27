@@ -1,0 +1,8 @@
+spring:
+  #profiles.active: local
+  application:
+    name: reactive-api-server
+  config:
+    import:
+      - application-core-common.yml
+      - application-core.yml
