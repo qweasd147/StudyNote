@@ -22,8 +22,10 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     api("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-    //implementation("com.github.jasync-sql:jasync-r2dbc-mysql:2.1.7")
+
+
     implementation("com.github.jasync-sql:jasync-r2dbc-mysql:2.1.23")
+    runtimeOnly("com.mysql:mysql-connector-j")
     //implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     implementation("org.flywaydb:flyway-mysql")

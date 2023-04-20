@@ -1,18 +1,5 @@
-spring:
-  data:
-    jdbc:
-      repositories:
-        enabled: false
-  sleuth:
-    trace-id128: true
-  jpa:
-    properties:
-      hibernate:
-        default_batch_fetch_size: 20
-        generate_statistics: false
-        query:
-          in_clause_parameter_padding: true
 
 logging:
   level:
-    org.springframework.boot.context.config: trace
+    root: info
+#    org.springframework.boot.context.config: trace

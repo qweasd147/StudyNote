@@ -54,18 +54,11 @@ subprojects {
 
     dependencies {
 
-        //implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-        //implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        //implementation("org.springframework.boot:spring-boot-starter-validation")
-        //implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-        //implementation("org.flywaydb:flyway-core")
-        //implementation("org.flywaydb:flyway-mysql")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         //developmentOnly("org.springframework.boot:spring-boot-devtools")
-        runtimeOnly("com.mysql:mysql-connector-j")
 
         api("io.github.microutils:kotlin-logging-jvm:3.0.4")
         api("org.slf4j:slf4j-api:2.0.5")
