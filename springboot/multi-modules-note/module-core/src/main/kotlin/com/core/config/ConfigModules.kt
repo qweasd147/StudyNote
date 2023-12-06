@@ -9,5 +9,5 @@ enum class ConfigModules(
 ) {
 
     ModuleOneCore(ModuleOneConfig::class),
-    ModuleTowCore(ModuleTwoConfig::class),
+    ModuleTwoCore(ModuleTwoConfig::class),
 }

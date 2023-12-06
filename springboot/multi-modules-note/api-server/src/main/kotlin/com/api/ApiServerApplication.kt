@@ -7,7 +7,7 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication
 @EnableModuleCore(
-	initConfigs = [ConfigModules.ModuleOneCore]
+	initConfigs = [ConfigModules.ModuleTwoCore]
 )
 class ApiServerApplication
 

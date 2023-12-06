@@ -11,4 +11,8 @@ class ModuleTwoComponent {
     init {
         log.info("init ModuleTwoComponent")
     }
+
+    fun test() {
+        log.info("ready")
+    }
 }
