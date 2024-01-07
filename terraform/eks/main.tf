@@ -24,3 +24,21 @@ module "eks-cluster" {
 
   eks-cluster-private-subnets-id = [for sub-pri in module.vpc.sub-pri : sub-pri.id]
 }
+
+output "eks-cluster-name" {
+  value = module.eks-cluster.eks-cluster-name
+}
+
+output "eks-cluster-version" {
+  value = module.eks-cluster.eks-cluster-version
+}
+
+
+output "eks-cluster-arn" {
+  value = module.eks-cluster.eks-cluster-arn
+}
+
+output "eks-endpoint" {
+  value = module.eks-cluster.eks-endpoint
+}
+
