@@ -14,3 +14,11 @@ output "eks-cluster-arn" {
 output "eks-endpoint" {
   value = aws_eks_cluster.eks-main-cluster.endpoint
 }
+
+output "ecr-repository-url" {
+  value = aws_ecr_repository.eks-ecr.repository_url
+}
+
+output "ecr-repository-name" {
+  value = aws_ecr_repository.eks-ecr.name
+}

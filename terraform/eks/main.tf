@@ -42,3 +42,10 @@ output "eks-endpoint" {
   value = module.eks-cluster.eks-endpoint
 }
 
+output "ecr-repository-url" {
+  value = module.eks-cluster.ecr-repository-url
+}
+
+output "ecr-repository-name" {
+  value = module.eks-cluster.ecr-repository-name
+}

@@ -24,6 +24,8 @@ resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSVPCResourceControlle
 resource "aws_eks_cluster" "eks-main-cluster" {
   name     = "eks-cluster-${var.cluster_info.name}"
   role_arn = aws_iam_role.role-cluster.arn
+  version  = "1.30"
+
   vpc_config {
     subnet_ids = var.eks-cluster-private-subnets-id
   }
@@ -54,6 +56,12 @@ resource "aws_iam_role_policy_attachment" "role-pod-execution-AmazonEKSFargatePo
   role       = aws_iam_role.role-pod-execution.name
 }
 
+# resource "kubernetes_namespace_v1" "default-namespace" {
+#   metadata {
+#     name = "joo"
+#   }
+# }
+
 // default/joo/kube-system 네임스페이스 안에 pod에 대해서만 적용
 resource "aws_eks_fargate_profile" "default" {
   cluster_name           = aws_eks_cluster.eks-main-cluster.name
@@ -69,4 +77,8 @@ resource "aws_eks_fargate_profile" "default" {
   selector {
     namespace = "kube-system"
   }
+}
+
+resource "aws_ecr_repository" "eks-ecr" {
+  name = "${var.cluster_info.name}-aws-container-nginx"
 }
