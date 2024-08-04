@@ -70,6 +70,6 @@ class ArticleUpdateRequest(
 
     @field:NotBlank
     var subject: String = "",
-    @field:NotBlank
+    //@field:NotBlank
     var contents: String = ""
 )

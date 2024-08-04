@@ -28,6 +28,12 @@ class ArticleController(
         @PathVariable id: Long
     ): ArticleDto = ArticleDto.of(this.articleService.findByIdWithOptimisticLock(id))
 
+    @PutMapping("/optimistic/{id}")
+    fun updateByIdWithOptimisticLock(
+        @PathVariable id: Long,
+        articleUpdateRequest: ArticleUpdateRequest,
+    ): ArticleDto = ArticleDto.of(this.articleService.updateWithOptimisticLock(id, articleUpdateRequest))
+
     @GetMapping("/optimistic-force/{id}")
     fun findByIdWithOptimisticForceLock(
         @PathVariable id: Long

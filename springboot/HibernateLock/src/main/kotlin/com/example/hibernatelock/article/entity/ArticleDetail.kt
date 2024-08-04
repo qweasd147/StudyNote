@@ -37,9 +37,5 @@ class ArticleDetail(
 
         this.subject = subject
         this.contents = contents
-
-//        this.article.updateContent(
-//            subject = subject
-//        )
     }
 }

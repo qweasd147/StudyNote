@@ -6,8 +6,6 @@ import com.example.hibernatelock.article.entity.Article
 import com.example.hibernatelock.article.entity.ArticleDetail
 import com.example.hibernatelock.article.repository.ArticleDetailRepository
 import com.example.hibernatelock.article.repository.ArticleRepository
-import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
@@ -60,6 +58,18 @@ class ArticleService(
 
         return this.articleDetailRepository.findByIdWithOptimisticForceLock(id)
             ?: throw IllegalArgumentException()
+    }
+
+    @Transactional
+    fun updateWithOptimisticLock(
+        id: Long, articleUpdateRequest: ArticleUpdateRequest
+    ): Article {
+
+        val article = this.articleRepository.findByIdWithOptimisticLock(id) ?: throw IllegalArgumentException()
+
+        return article.also {
+            it.updateSubject(articleUpdateRequest.subject)
+        }
     }
 
     @Transactional

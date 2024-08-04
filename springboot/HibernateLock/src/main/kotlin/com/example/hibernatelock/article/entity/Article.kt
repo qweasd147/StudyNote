@@ -25,7 +25,7 @@ class Article(
     var version: Int = 0
         protected set
 
-    fun updateContent(subject: String) {
+    fun updateSubject(subject: String) {
 
         this.subject = subject
     }
