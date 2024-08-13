@@ -100,6 +100,10 @@ apply objects
 kubectl apply -f objects/namespace.yaml
 kubectl apply -f objects/deployment.yaml
 kubectl apply -f objects/service.yaml
+
+-- for using ingress
+kubectl apply -f objects/service-ingress.yaml
+kubectl apply -f objects/alb-ingress.yaml
 ```
 
 change default namespace
@@ -138,7 +142,11 @@ docker logout {account-id}.dkr.ecr.ap-northeast-2.amazonaws.com/{repository name
 
 ```sh
 kubectl config get-contexts
-kubectl config delete-context eks-cluster-test_eks
+kubectl config delete-context test_eks
+```
+
+```
+kubectl describe ingress aws-container-nginx-ingress
 ```
 
 외부에서 kubectl사용해서 pod에 요청 보내기
@@ -153,6 +161,12 @@ k8s 버전별 설치 가능한 에드온 버전 확인
 aws eks describe-addon-versions --addon-name aws-ebs-csi-driver --kubernetes-version 1.30 --profile joo --region ap-northeast-2
 aws eks describe-addon-versions --addon-name vpc-cni --kubernetes-version 1.30 --profile joo --region ap-northeast-2
 ```
+
+`terraform`을 `destroy`한 뒤에도 eks cloudwatch log group은 그대로 살아있는 문제가 있다. eks가 완전히 내려간 이후에도 내부적으로 로그를 사용된다고 하는데 terraform에선 aws 정책적인 문제라 딱히 할 수 있는게 없다고 한다.
+
+- destroy 이후에 생성 된 cloudwatch의 log group을 삭제 해줘야함
+
+> https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1019
 
 ---
 
