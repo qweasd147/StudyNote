@@ -2,7 +2,7 @@ module "eks" {
   source                         = "terraform-aws-modules/eks/aws"
   cluster_name                   = var.cluster_name
   cluster_version                = "1.30"
-  version                        = "19.15.3"
+  version                        = "20.23.0"
   subnet_ids                     = var.private_subnets_id
   vpc_id                         = var.vpc_id
   cluster_endpoint_public_access = true
@@ -18,9 +18,20 @@ module "eks" {
       instance_types = ["t3.small"]
 
       min_size     = 1
-      max_size     = 2
+      max_size     = 1
       desired_size = 1
     }
+
+    # two = {
+    #   name = "spot-node-group-2"
+
+    #   instance_types = ["t3.small"]
+
+    #   capacity_type = "SPOT"
+    #   min_size      = 1
+    #   max_size      = 2
+    #   desired_size  = 1
+    # }
 
     # two = {
     #   name = "node-group-2"
