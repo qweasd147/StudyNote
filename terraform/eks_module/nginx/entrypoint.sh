@@ -5,8 +5,8 @@ INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 HOSTNAME=$(hostname)
 
 # index.html 파일의 placeholder를 실제 값으로 치환
-sed -i "s/Loading.../$INSTANCE_ID/" /usr/share/nginx/html/index.html
-sed -i "s/Loading.../$HOSTNAME/" /usr/share/nginx/html/index.html
+sed -i "s/Loading_INSTANCE_ID/$INSTANCE_ID/" /usr/share/nginx/html/index.html
+sed -i "s/Loading_HOSTNAME/$HOSTNAME/" /usr/share/nginx/html/index.html
 
 echo "$INSTANCE_ID"
 echo "$HOSTNAME"

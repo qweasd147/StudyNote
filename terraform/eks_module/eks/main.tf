@@ -2,24 +2,37 @@ module "eks" {
   source                         = "terraform-aws-modules/eks/aws"
   cluster_name                   = var.cluster_name
   cluster_version                = "1.30"
-  version                        = "19.15.3"
+  version                        = "20.24.0"
   subnet_ids                     = var.private_subnets_id
   vpc_id                         = var.vpc_id
   cluster_endpoint_public_access = true
+
+  // cluster_platform_version = "eks.6"
 
   eks_managed_node_group_defaults = {
     ami_type = "AL2_x86_64"
   }
 
   eks_managed_node_groups = {
-    one = {
-      name = "node-group-1"
+    # one = {
+    #   name = "node-group-1"
+
+    #   instance_types = ["t3.small"]
+
+    #   min_size     = 1
+    #   max_size     = 1
+    #   desired_size = 1
+    # }
+
+    two = {
+      name = "spot-node-group-2"
 
       instance_types = ["t3.small"]
 
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      capacity_type = "SPOT"
+      min_size      = 1
+      max_size      = 1
+      desired_size  = 1
     }
 
     # two = {
@@ -31,6 +44,47 @@ module "eks" {
     #   max_size     = 2
     #   desired_size = 1
     # }
+  }
+
+  access_entries = {
+    admin = {
+      kubernetes_groups = []
+      # principal_arn     = "${data.aws_caller_identity.current.arn}"
+      principal_arn = "${var.admin_role_account.arn}"
+
+      policy_associations = {
+        cluster-admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        admin-view = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        edit-eks = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        view = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
   }
 
   tags = {

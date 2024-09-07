@@ -1,7 +1,7 @@
 module "lb_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
-  role_name                              = "${var.cluster_name}_eks_lb"
+  role_name                              = "${var.cluster_name}_eks_lb_role"
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {
@@ -11,6 +11,11 @@ module "lb_role" {
     }
   }
 }
+
+# resource "time_sleep" "wait_for_access_entries" {
+#   depends_on      = [module.lb_role]
+#   create_duration = "60s"
+# }
 
 resource "kubernetes_service_account" "service-account" {
   metadata {
@@ -25,6 +30,7 @@ resource "kubernetes_service_account" "service-account" {
       "eks.amazonaws.com/sts-regional-endpoints" = "true"
     }
   }
+  // depends_on = [time_sleep.wait_for_access_entries]
 }
 
 resource "helm_release" "lb" {

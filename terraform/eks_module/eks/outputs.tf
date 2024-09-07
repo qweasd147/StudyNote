@@ -56,3 +56,7 @@ output "cluster-tls-certificate-sha1-fingerprint" {
 output "aws-eks-cluster-auth" {
   value = data.aws_eks_cluster_auth.eks
 }
+
+output "eks-cluster-platform-version" {
+  value = module.eks.cluster_platform_version
+}
