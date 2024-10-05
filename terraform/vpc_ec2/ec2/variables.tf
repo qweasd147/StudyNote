@@ -4,8 +4,11 @@ variable "vpc-id" {
 }
 
 variable "sg_alb_id" {
-
   default = null
+}
+
+variable "vpc_cidr_block" {
+  type = string
 }
 
 variable "ec2-instance" {

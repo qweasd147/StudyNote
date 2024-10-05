@@ -11,6 +11,7 @@ $ brew install tfenv
 ### 1.2 tfenv로 테라폼 버전관리
 
 ```sh
+$ tfenv list # 이용 가능한 테라폼 버전(로컬에 버전별 다운로드 된 terraform)
 $ tfenv list-remote # 설치 가능한 테라폼 버전 확인
 $ tfenv install x.y.z # 해당 테라폼 버전 설치
 $ tfenv use x.y.z # 해당 버전 활성화

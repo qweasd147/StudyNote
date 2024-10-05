@@ -94,7 +94,7 @@ resource "aws_route_table_association" "rt-pri-as" {
 
 resource "aws_eip" "nat-eip" {
   for_each = var.pri-subnets
-  vpc      = true
+  domain   = "vpc"
 
   tags = {
     Name = "eip-${each.key}"
