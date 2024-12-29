@@ -1,4 +1,4 @@
-필요한 셋팅 후(key_pair 2개 등록)
+필요한 셋팅 후(key_pair)
 
 ```sh
 $ terraform apply

@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.66.0"
+      version = "~> 5.70.0"
     }
   }
 }
@@ -12,11 +12,12 @@ terraform {
 provider "aws" {
   region                   = "ap-northeast-2"
   profile                  = "joo"
-  shared_credentials_files = ["/Users/joohyung.kim/.aws/credentials_joo"]
+  shared_credentials_files = ["~/.aws/credentials_joo"]
 }
 
 data "aws_key_pair" "for_bastion_key_pair" {
   key_name = "tf-key-pair"
+
 }
 
 data "aws_key_pair" "private_instance_key_pair" {
@@ -30,8 +31,8 @@ locals {
   # vpc_cidr_block = "10.3.0.0/16"
 }
 
-module "vpc" {
-  source = "./vpc"
+module "networks" {
+  source = "./networks"
 
   vpc_info = {
     name : "sample_project_vpc"
@@ -62,7 +63,7 @@ module "vpc" {
 module "ec2-web-server" {
 
   source         = "./ec2"
-  vpc-id         = module.vpc.vpc-id
+  vpc-id         = module.networks.vpc-id
   sg_alb_id      = module.alb.sg_alb_id
   vpc_cidr_block = local.vpc_cidr_block
 
@@ -70,59 +71,52 @@ module "ec2-web-server" {
     "web-2a" = {
       ami           = "ami-014009fa4a1467d53"
       az            = "ap-northeast-2a"
-      instance_type = "t2.micro"
+      instance_type = "t3.micro"
       key_pair      = data.aws_key_pair.private_instance_key_pair.key_name
       sg_ids        = []
-      subnet_id     = module.vpc.sub-pri["pri_sub1_2a"].id
+      subnet_id     = module.networks.sub-pri["pri_sub1_2a"].id
     }
     "web-2c" = {
       ami           = "ami-014009fa4a1467d53"
       az            = "ap-northeast-2c"
-      instance_type = "t2.micro"
+      instance_type = "t3.micro"
       key_pair      = data.aws_key_pair.private_instance_key_pair.key_name
       sg_ids        = []
-      #subnet_id     = module.vpc.sub-pri.pri_sub2_2c.id
-      subnet_id = module.vpc.sub-pri["pri_sub2_2c"].id
+      #subnet_id     = module.networks.sub-pri.pri_sub2_2c.id
+      subnet_id = module.networks.sub-pri["pri_sub2_2c"].id
     }
   }
 
   bastion-ec2-instance = {
     ami              = "ami-014009fa4a1467d53"
     az               = "ap-northeast-2a"
-    instance_type    = "t2.micro"
+    instance_type    = "t3.micro"
     key_pair         = data.aws_key_pair.for_bastion_key_pair.key_name
-    public_subnet_id = module.vpc.sub-pub["pub_sub1_2a"].id
+    public_subnet_id = module.networks.sub-pub["pub_sub1_2a"].id
     sg_ids           = []
   }
 
 
   depends_on = [
-    module.vpc
+    module.networks
   ]
 }
-
 
 module "alb" {
   source = "./alb"
 
-  vpc-id                = module.vpc.vpc-id
-  link-pub-subnets-id   = [for sub-pub in module.vpc.sub-pub : sub-pub.id]
+  vpc-id                = module.networks.vpc-id
+  link-pub-subnets-id   = [for sub-pub in module.networks.sub-pub : sub-pub.id]
   link-ec2-instances-id = module.ec2-web-server.server-instances-id
-
-  /*
-  depends_on = [
-    module.ec2-web-server
-  ]
-  */
 }
 
-module "alaram" {
-  source = "./alarm"
+# module "alaram" {
+#   source = "./alarm"
 
-  alaram_lambda_name             = "sample-project-development-alarm"
-  target_load_balance_arn_suffix = module.alb.created_loadbalancer.arn_suffix
-  target_target_group_arn_suffix = module.alb.created_target_group.arn_suffix
-}
+#   alaram_lambda_name             = "sample-project-development-alarm"
+#   target_load_balance_arn_suffix = module.alb.created_loadbalancer.arn_suffix
+#   target_target_group_arn_suffix = module.alb.created_target_group.arn_suffix
+# }
 
 
 output "alb_dns_name" {
@@ -137,6 +131,6 @@ output "bastion-public-ip" {
   value = module.ec2-web-server.bastion-public-ip
 }
 
-output "sns_alaram_name" {
-  value = module.alaram.sns_name
-}
+# output "sns_alaram_name" {
+#   value = module.alaram.sns_name
+# }
