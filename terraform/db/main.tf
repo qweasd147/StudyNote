@@ -32,6 +32,12 @@ module "auroradb" {
   master-password = "admin1234!"
 }
 
+module "alam" {
+  source                = "./alam"
+  cloudwatch-group-name = "/aws/rds/cluster/joo-aurora-cluster/slowquery"
+  lambda-name           = "dev-lambda-alaram"
+}
+
 ### Bastion 서버 설정
 resource "aws_instance" "bastion" {
   ami                    = "ami-014009fa4a1467d53"
