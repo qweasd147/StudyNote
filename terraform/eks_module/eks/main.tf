@@ -87,6 +87,21 @@ module "eks" {
     }
   }
 
+  cluster_addons = {
+    coredns = {
+      most_recent       = true
+      resolve_conflicts = "OVERWRITE"
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent       = true
+      before_compute    = true
+      resolve_conflicts = "OVERWRITE"
+    }
+  }
+
   tags = {
     terraform = "true"
   }
@@ -114,29 +129,30 @@ module "irsa-ebs-csi" {
 
 
 resource "aws_ecr_repository" "eks-ecr" {
-  name = "${var.cluster_name}-aws-container-nginx"
+  name         = "${var.cluster_name}-aws-container-nginx"
+  force_delete = true
 }
 
-resource "aws_eks_addon" "vpc-cni" {
-  cluster_name  = module.eks.cluster_name
-  addon_name    = "vpc-cni"
-  addon_version = "v1.18.2-eksbuild.1"
-  tags = {
-    "eks_addon" = "vpc-cni"
-    "terraform" = "true"
-  }
-}
+# resource "aws_eks_addon" "vpc-cni" {
+#   cluster_name  = module.eks.cluster_name
+#   addon_name    = "vpc-cni"
+#   addon_version = "v1.18.2-eksbuild.1"
+#   tags = {
+#     "eks_addon" = "vpc-cni"
+#     "terraform" = "true"
+#   }
+# }
 
-resource "aws_eks_addon" "ebs-csi" {
-  cluster_name             = module.eks.cluster_name
-  addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.33.0-eksbuild.1"
-  service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
-  tags = {
-    "eks_addon" = "ebs-csi"
-    "terraform" = "true"
-  }
-}
+# resource "aws_eks_addon" "ebs-csi" {
+#   cluster_name             = module.eks.cluster_name
+#   addon_name               = "aws-ebs-csi-driver"
+#   addon_version            = "v1.33.0-eksbuild.1"
+#   service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+#   tags = {
+#     "eks_addon" = "ebs-csi"
+#     "terraform" = "true"
+#   }
+# }
 
 # resource "aws_eks_addon" "coredns" {
 #   cluster_name  = module.eks.cluster_name

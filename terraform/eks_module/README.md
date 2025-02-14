@@ -44,28 +44,6 @@ aws sts get-caller-identity --profile joo
 # }
 ```
 
-```sh
-kubectl get configmap aws-auth -n kube-system -o yaml > aws-auth.yaml
-```
-
-아래 mapUsers 추가
-
-```
-mapUsers: |
-    - userarn: arn:aws:iam::{accountId}:user/{userId}
-      username: {userId}
-      groups:
-        - system:masters
-```
-
-```
-
-```
-
-```
-$ kubectl apply -f aws-auth.yaml
-```
-
 docker build
 
 ```sh
@@ -103,7 +81,13 @@ kubectl apply -f objects/service.yaml
 
 -- for using ingress
 kubectl apply -f objects/service-ingress.yaml
-kubectl apply -f objects/alb-ingress.yaml
+```
+
+`service-ingress.yaml`파일 까지 적용 하였다면 `kubectl get ingress`, `kubectl get targetgroupbindings -o wide` 명령어 등을 통해 `alb`와 `target group` 정보 확인이 가능하다.
+
+```
+kubectl delete -f objects/deployment.yaml
+kubectl delete -f objects/service-ingress.yaml
 ```
 
 change default namespace
