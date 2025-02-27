@@ -59,6 +59,6 @@ resource "aws_lambda_permission" "invoke-function" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda-alam.function_name
   principal     = "logs.amazonaws.com"
-  source_arn    = "${data.aws_cloudwatch_log_group.target.arn}:*"
+  source_arn    = "${data.aws_cloudwatch_log_group.subscribe-group.arn}:*"
 }
 

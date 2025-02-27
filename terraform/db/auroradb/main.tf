@@ -57,7 +57,6 @@ resource "aws_rds_cluster_parameter_group" "aurora-cluster-param-group" {
   }
 }
 
-
 resource "aws_rds_cluster" "aurora-cluster" {
   cluster_identifier = "${var.db-name}-aurora-cluster"
   engine             = "aurora-mysql"
@@ -91,12 +90,12 @@ resource "aws_rds_cluster_instance" "aurora_instance1" {
   engine         = aws_rds_cluster.aurora-cluster.engine
   engine_version = aws_rds_cluster.aurora-cluster.engine_version
 
-  #performance_insights_enabled          = true
-  #performance_insights_retention_period = 7
+  performance_insights_enabled = false
+  # performance_insights_retention_period = 7
   publicly_accessible = false
 
   db_subnet_group_name = aws_db_subnet_group.db-subnet-group.name
-  // db_parameter_group_name = aws_db_parameter_group.aurora-param-group.name
+  # db_parameter_group_name = aws_db_parameter_group.aurora-param-group.name
 }
 
 # resource "aws_rds_cluster_instance" "aurora_instance2" {
@@ -108,11 +107,11 @@ resource "aws_rds_cluster_instance" "aurora_instance1" {
 #   engine_version = aws_rds_cluster.aurora-cluster.engine_version
 
 #   performance_insights_enabled = false
-#   #performance_insights_retention_period = 7
+#   # performance_insights_retention_period = 7
 #   publicly_accessible = false
 
-#   db_subnet_group_name    = aws_db_subnet_group.db-subnet-group.name
-#   db_parameter_group_name = aws_db_parameter_group.aurora-param-group.name
+#   db_subnet_group_name = aws_db_subnet_group.db-subnet-group.name
+#   # db_parameter_group_name = aws_db_parameter_group.aurora-param-group.name
 # }
 
 
