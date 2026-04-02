@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/sleep")
-class ArticleController(
+class ArticleSleepController(
     private val articleService: ArticleService,
 ) {
 
